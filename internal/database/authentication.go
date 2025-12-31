@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/levionstudio/eddoswipe-backend/internal/models"
@@ -200,6 +201,7 @@ WHERE md.master_distributor_id = @master_distributor_id;
 	})
 
 	if err != nil {
+		log.Println(err)
 		return fmt.Errorf("failed to create distributor")
 	}
 	return nil
