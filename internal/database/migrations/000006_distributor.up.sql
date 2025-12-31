@@ -1,7 +1,7 @@
 CREATE TABLE
     IF NOT EXISTS distributors (
         master_distributor_id TEXT NOT NULL,
-        distributor_id TEXT UNIQUE NOT NULL DEFAULT ('MD' || LPAD(nextval('distributor_id_sequence')::TEXT, 9, '0')),
+        distributor_id TEXT UNIQUE NOT NULL DEFAULT ('D' || LPAD(nextval('distributor_id_sequence')::TEXT, 9, '0')),
         distributor_name TEXT NOT NULL,
         distributor_father_or_spouse_name TEXT NOT NULL DEFAULT '',
         distributor_email TEXT NOT NULL,

@@ -1,12 +1,13 @@
 package models
 
 type GetAdminModel struct {
-	AdminID    string `json:"admin_id"`
-	AdminName  string `json:"admin_name"`
-	AdminEmail string `json:"admin_email"`
-	AdminPhone string `json:"admin_phone"`
-	CreatedAt  string `json:"created_at"`
-	UpdatedAt  string `json:"updated_at"`
+	AdminID            string `json:"admin_id"`
+	AdminName          string `json:"admin_name"`
+	AdminEmail         string `json:"admin_email"`
+	AdminPhone         string `json:"admin_phone"`
+	AdminWalletBalance string `json:"admin_wallet_balance"`
+	CreatedAt          string `json:"created_at"`
+	UpdatedAt          string `json:"updated_at"`
 }
 
 type GetMasterDistributorModel struct {
@@ -31,6 +32,7 @@ type GetMasterDistributorModel struct {
 	MasterDistributorAddedBy            string `json:"master_distributor_added_by"`
 	MasterDistributorAddedByID          string `json:"master_distributor_added_by_id"`
 	MasterDistributiorKYCStatus         bool   `json:"master_distributor_kyc_status"`
+	MasterDistributorWalletBalance      string `json:"master_distributor_wallet_balance"`
 	IsMasterDistributorBlocked          bool   `json:"is_master_distributor_blocked"`
 	CreatedAt                           string `json:"created_at"`
 	UpdatedAt                           string `json:"updated_at"`
@@ -57,7 +59,8 @@ type GetDistributorModel struct {
 	DistributorFirmDistrict       string `json:"distributor_firm_district"`
 	DistributorAddedBy            string `json:"distributor_added_by"`
 	DistributorAddedByID          string `json:"distributor_added_by_id"`
-	DistributorKYCStatus         bool   `json:"distributor_kyc_status"`
+	DistributorKYCStatus          bool   `json:"distributor_kyc_status"`
+	DistributorWalletBalance      string `json:"distributor_wallet_balance"`
 	IsDistributorBlocked          bool   `json:"is_distributor_blocked"`
 	CreatedAt                     string `json:"created_at"`
 	UpdatedAt                     string `json:"updated_at"`
@@ -85,6 +88,7 @@ type GetRetailerModel struct {
 	RetailerAddedBy            string `json:"retailer_added_by"`
 	RetailerAddedByID          string `json:"retailer_added_by_id"`
 	RetailerKYCStatus          bool   `json:"retailer_kyc_status"`
+	RetailerWalletBalance      string `json:"retailer_wallet_balance"`
 	IsRetailerBlocked          bool   `json:"is_retailer_blocked"`
 	CreatedAt                  string `json:"created_at"`
 	UpdatedAt                  string `json:"updated_at"`

@@ -10,7 +10,7 @@ import (
 func (db *Database) GetAllAdminsQuery(ctx context.Context) (*[]models.GetAdminModel, error) {
 	query := `
 		SELECT admin_id, admin_name, admin_email,
-		admin_phone, created_at::TEXT, updated_at::TEXT
+		admin_phone, admin_wallet_balance::TEXT, created_at::TEXT, updated_at::TEXT
 		FROM admins;
 	`
 	res, err := db.pool.Query(ctx, query)
@@ -27,6 +27,7 @@ func (db *Database) GetAllAdminsQuery(ctx context.Context) (*[]models.GetAdminMo
 			&admin.AdminName,
 			&admin.AdminEmail,
 			&admin.AdminPhone,
+			&admin.AdminWalletBalance,
 			&admin.CreatedAt,
 			&admin.UpdatedAt,
 		); err != nil {
@@ -66,6 +67,7 @@ func (db *Database) GetAllMasterDistributorsQuery(ctx context.Context) (*[]model
 			master_distributor_added_by,
 			master_distributor_added_by_id,
 			master_distributor_kyc_status,
+			master_distributor_wallet_balance::TEXT,
 			is_master_distributor_blocked,
 			created_at::TEXT AS created_at,
 			updated_at::TEXT AS updated_at
@@ -105,6 +107,7 @@ func (db *Database) GetAllMasterDistributorsQuery(ctx context.Context) (*[]model
 			&md.MasterDistributorAddedBy,
 			&md.MasterDistributorAddedByID,
 			&md.MasterDistributiorKYCStatus,
+			&md.MasterDistributorWalletBalance,
 			&md.IsMasterDistributorBlocked,
 			&md.CreatedAt,
 			&md.UpdatedAt,
@@ -146,7 +149,8 @@ func (db *Database) GetAllDistributorsQuery(ctx context.Context) (*[]models.GetD
 			distributor_added_by,
 			distributor_added_by_id,
 			distributor_kyc_status,
-			is_distributor_blocked,
+			distributor_wallet_balance,
+			is_distributor_blocked::TEXT,
 			created_at::TEXT AS created_at,
 			updated_at::TEXT AS updated_at
 		FROM distributors;
@@ -185,6 +189,7 @@ func (db *Database) GetAllDistributorsQuery(ctx context.Context) (*[]models.GetD
 			&d.DistributorAddedBy,
 			&d.DistributorAddedByID,
 			&d.DistributorKYCStatus,
+			&d.DistributorWalletBalance,
 			&d.IsDistributorBlocked,
 			&d.CreatedAt,
 			&d.UpdatedAt,
@@ -226,6 +231,7 @@ func (db *Database) GetAllRetailersQuery(ctx context.Context) (*[]models.GetReta
 			retailer_added_by,
 			retailer_added_by_id,
 			retailer_kyc_status,
+			retailer_wallet_balance::TEXT,
 			is_retailer_blocked,
 			created_at::TEXT AS created_at,
 			updated_at::TEXT AS updated_at
@@ -265,6 +271,7 @@ func (db *Database) GetAllRetailersQuery(ctx context.Context) (*[]models.GetReta
 			&r.RetailerAddedBy,
 			&r.RetailerAddedByID,
 			&r.RetailerKYCStatus,
+			&r.RetailerWalletBalance,
 			&r.IsRetailerBlocked,
 			&r.CreatedAt,
 			&r.UpdatedAt,
