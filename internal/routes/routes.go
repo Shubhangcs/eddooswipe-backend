@@ -33,11 +33,7 @@ func NewRouter(cfg Config) (*Router, error) {
 
 	rtr := Router{EchoRouter: router}
 
-	rtr.EchoRouter.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"*"},
-		AllowHeaders: []string{"*"},
-	}))
+	rtr.EchoRouter.Use(middleware.CORS())
 	rtr.authenticationRoutes(cfg.Database, jwt)
 	rtr.usersRoutes(cfg.Database, jwt)
 
