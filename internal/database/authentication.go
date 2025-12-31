@@ -124,57 +124,54 @@ func (db *Database) CreateMasterDistributorQuery(ctx context.Context, req models
 
 func (db *Database) CreateDistributorQuery(ctx context.Context, req models.CreateDistributorModel) error {
 	query := `
-		WITH admin_id_details AS (
-			SELECT admin_id FROM master_distributors WHERE master_distributor_id=@master_distributor_id
-		)
-		admin_name_details AS (
-			SELECT admin_name FROM admins WHERE admin_id=(SELECT admin_id FROM admin_id_details)
-		)
-		INSERT INTO distributors(
-			master_distributor_id,
-			distributor_name,
-			distributor_father_or_spouse_name,
-			distributor_email,
-			distributor_phone,
-			distributor_password,
-			distributor_pan_number,
-			distributor_aadhar_number,
-			distributor_gst_number,
-			distributor_pin_code,
-			distributor_address,
-			distributor_city,
-			distributor_state,
-			distributor_firm_name,
-			distributor_firm_address,
-			distributor_firm_city,
-			distributor_firm_pin,
-			distributor_firm_state,
-			distributor_firm_district,
-			distributor_added_by,
-			distributor_added_by_id
-		) VALUES (
-			@master_distributor_id,
-			@distributor_name,
-			@distributor_father_or_spouse_name,
-			@distributor_email,
-			@distributor_phone,
-			@distributor_password,
-			@distributor_pan_number,
-			@distributor_aadhar_number,
-			@distributor_gst_number,
-			@distributor_pin_code,
-			@distributor_address,
-			@distributor_city,
-			@distributor_state,
-			@distributor_firm_name,
-			@distributor_firm_address,
-			@distributor_firm_city,
-			@distributor_firm_pin,
-			@distributor_firm_state,
-			@distributor_firm_district,
-			(SELECT admin_name FROM admin_name_details),
-			(SELECT admin_id FROM admin_id_details)
-		);
+		INSERT INTO distributors (
+    master_distributor_id,
+    distributor_name,
+    distributor_father_or_spouse_name,
+    distributor_email,
+    distributor_phone,
+    distributor_password,
+    distributor_pan_number,
+    distributor_aadhar_number,
+    distributor_gst_number,
+    distributor_pin_code,
+    distributor_address,
+    distributor_city,
+    distributor_state,
+    distributor_firm_name,
+    distributor_firm_address,
+    distributor_firm_city,
+    distributor_firm_pin,
+    distributor_firm_state,
+    distributor_firm_district,
+    distributor_added_by,
+    distributor_added_by_id
+)
+SELECT
+    @master_distributor_id,
+    @distributor_name,
+    @distributor_father_or_spouse_name,
+    @distributor_email,
+    @distributor_phone,
+    @distributor_password,
+    @distributor_pan_number,
+    @distributor_aadhar_number,
+    @distributor_gst_number,
+    @distributor_pin_code,
+    @distributor_address,
+    @distributor_city,
+    @distributor_state,
+    @distributor_firm_name,
+    @distributor_firm_address,
+    @distributor_firm_city,
+    @distributor_firm_pin,
+    @distributor_firm_state,
+    @distributor_firm_district,
+    a.admin_name,
+    a.admin_id
+FROM master_distributors md
+JOIN admins a ON a.admin_id = md.admin_id
+WHERE md.master_distributor_id = @master_distributor_id;
 	`
 	hash, err := pkg.GenerateHashedPassword(req.DistributorPassword)
 	if err != nil {
