@@ -26,7 +26,7 @@ func run() error {
 	// Loading all the required env
 	cfg, err := config.Load()
 	if err != nil {
-		return err
+		log.Println("failed to load env no file")
 	}
 	log.Println(".env loaded successfully")
 
