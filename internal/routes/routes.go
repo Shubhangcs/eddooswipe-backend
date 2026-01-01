@@ -36,6 +36,7 @@ func NewRouter(cfg Config) (*Router, error) {
 	rtr.EchoRouter.Use(middleware.CORS())
 	rtr.authenticationRoutes(cfg.Database, jwt)
 	rtr.usersRoutes(cfg.Database, jwt)
+	rtr.walletRoutes(cfg.Database, jwt)
 
 	return &rtr, nil
 }

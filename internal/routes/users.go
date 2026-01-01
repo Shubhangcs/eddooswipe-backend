@@ -16,4 +16,7 @@ func (r *Router) usersRoutes(db *database.Database, jwtUtils *pkg.JWTUtils) {
 	urg.GET("/get/all/mds", userHandler.GetAllMasterDistributorsRequest)
 	urg.GET("/get/all/distributors", userHandler.GetAllDistributorsRequest)
 	urg.GET("/get/all/retailers", userHandler.GetAllRetailersRequest)
+	urg.GET("/get/mds/:admin_id", userHandler.GetMasterDistributorsByAdminIDRequest)
+	urg.GET("/get/distributors/:master_distributor_id", userHandler.GetDistributorsByMasterDistributorIDRequest)
+	urg.GET("/get/retailers/:distributor_id", userHandler.GetRetailersByDistributorIDRequest)
 }

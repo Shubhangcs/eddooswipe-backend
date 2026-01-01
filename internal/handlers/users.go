@@ -49,3 +49,27 @@ func (uh *usersHandler) GetAllRetailersRequest(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, models.ResponseModel{Message: "retailers fetched successfully", Status: "success", Data: map[string]any{"retailers": res}})
 }
+
+func (uh *usersHandler) GetMasterDistributorsByAdminIDRequest(c echo.Context) error {
+	res, err := uh.usersRepository.GetMasterDistributorsByAdminID(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "master distributors fetched successfully", Status: "success", Data: map[string]any{"mds": res}})
+}
+
+func (uh *usersHandler) GetDistributorsByMasterDistributorIDRequest(c echo.Context) error {
+	res, err := uh.usersRepository.GetDistributorsByMasterDistributorID(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "distributors fetched successfully", Status: "success", Data: map[string]any{"distributors": res}})
+}
+
+func (uh *usersHandler) GetRetailersByDistributorIDRequest(c echo.Context) error {
+	res, err := uh.usersRepository.GetRetailersByDistributorID(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "retailers fetched successfully", Status: "success", Data: map[string]any{"retailers": res}})
+}

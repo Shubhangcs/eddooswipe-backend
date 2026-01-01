@@ -15,6 +15,9 @@ type UsersInterface interface {
 	GetAllMasterDistributors(echo.Context) (*[]models.GetMasterDistributorModel, error)
 	GetAllDistributors(echo.Context) (*[]models.GetDistributorModel, error)
 	GetAllRetailers(echo.Context) (*[]models.GetRetailerModel, error)
+	GetMasterDistributorsByAdminID(echo.Context) (*[]models.GetMasterDistributorModel, error)
+	GetDistributorsByMasterDistributorID(echo.Context) (*[]models.GetDistributorModel, error)
+	GetRetailersByDistributorID(echo.Context) (*[]models.GetRetailerModel, error)
 }
 
 type usersRepository struct {
@@ -51,4 +54,25 @@ func (ur *usersRepository) GetAllRetailers(c echo.Context) (*[]models.GetRetaile
 	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
 	defer cancel()
 	return ur.db.GetAllRetailersQuery(ctx)
+}
+
+func (ur *usersRepository) GetMasterDistributorsByAdminID(c echo.Context) (*[]models.GetMasterDistributorModel, error) {
+	adminID := c.Param("admin_id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return ur.db.GetMasterDistributorsByAdminIDQuery(ctx, adminID)
+}
+
+func (ur *usersRepository) GetDistributorsByMasterDistributorID(c echo.Context) (*[]models.GetDistributorModel, error) {
+	masterDistributorID := c.Param("master_distributor_id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return ur.db.GetDistributorsByMasterDistributorIDQuery(ctx, masterDistributorID)
+}
+
+func (ur *usersRepository) GetRetailersByDistributorID(c echo.Context) (*[]models.GetRetailerModel, error) {
+	distributorID := c.Param("distributor_id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return ur.db.GetRetailersByDistributorIDQuery(ctx, distributorID)
 }
