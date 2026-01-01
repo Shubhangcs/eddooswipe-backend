@@ -69,7 +69,7 @@ func (db *Database) AdminWalletTopupQuery(ctx context.Context, req models.AdminW
 	adminWalletBalanceUpdateQuery := `
 		UPDATE admins
 		SET admin_wallet = admin_wallet + @amount::NUMERIC
-		WHERE admin_id = @admin_id;
+		WHERE admin_id = @admin_id AND @amount::NUMERIC > 0;
 	`
 	ledgerEntryQuery := `
 		WITH admin_wallet_details AS (
@@ -95,12 +95,18 @@ func (db *Database) AdminWalletTopupQuery(ctx context.Context, req models.AdminW
 	}
 	defer tx.Rollback(ctx)
 
-	if _, err := tx.Exec(ctx, adminWalletBalanceUpdateQuery, pgx.NamedArgs{
+	res, err := tx.Exec(ctx, adminWalletBalanceUpdateQuery, pgx.NamedArgs{
 		"admin_id": req.AdminID,
 		"amount":   req.Amount,
-	}); err != nil {
+	}); 
+	if err != nil {
 		return fmt.Errorf("failed to update admin wallet balance")
 	}
+
+	if res.RowsAffected() == 0 {
+		return fmt.Errorf("failed to topup admin wallet")
+	}
+
 	if _, err := tx.Exec(ctx, ledgerEntryQuery, pgx.NamedArgs{
 		"admin_id":             req.AdminID,
 		"ledger_reference_id":  "NONE",
