@@ -74,7 +74,7 @@ func (db *Database) AdminWalletTopupQuery(ctx context.Context, req models.AdminW
 	ledgerEntryQuery := `
 		WITH admin_wallet_details AS (
 			SELECT admin_wallet FROM admins WHERE admin_id=@admin_id
-		),
+		)
 		INSERT INTO ledger_entries (
 			transactor_id,
 			reference_id,
