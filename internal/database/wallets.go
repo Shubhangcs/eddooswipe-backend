@@ -68,14 +68,14 @@ func (db *Database) AdminWalletTopupQuery(ctx context.Context, req models.AdminW
 	remarks = req.Remarks
 	adminWalletBalanceUpdateQuery := `
 		UPDATE admins
-		SET admin_wallet = admin_wallet + @amount
+		SET admin_wallet = admin_wallet + @amount::NUMERIC
 		WHERE admin_id = @admin_id;
 	`
 	ledgerEntryQuery := `
 		WITH admin_wallet_details AS (
 			SELECT admin_wallet FROM admins WHERE admin_id=@admin_id
 		),
-		INSERT INTO ledger (
+		INSERT INTO ledger_entries (
 			transactor_id,
 			reference_id,
 			credit_amount,

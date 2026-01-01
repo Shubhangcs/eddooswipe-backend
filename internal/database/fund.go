@@ -8,7 +8,7 @@ import (
 	"github.com/levionstudio/eddoswipe-backend/internal/models"
 )
 
-func (db *Database) CreateFundRequestAdmin(ctx context.Context, req models.CreateFundRequest) error {
+func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.CreateFundRequest) error {
 	query := `
 		INSERT INTO fund_requests(
 			requester_id,
@@ -44,7 +44,7 @@ func (db *Database) CreateFundRequestAdmin(ctx context.Context, req models.Creat
 	return nil
 }
 
-func getLatestBalanceTx(ctx context.Context,tx pgx.Tx,table, walletCol, idCol, userID string) (string, error) {
+func getLatestBalanceTx(ctx context.Context, tx pgx.Tx, table, walletCol, idCol, userID string) (string, error) {
 
 	query := fmt.Sprintf(
 		"SELECT %s::TEXT FROM %s WHERE %s = @user_id",
@@ -63,7 +63,7 @@ func getLatestBalanceTx(ctx context.Context,tx pgx.Tx,table, walletCol, idCol, u
 	return balance, err
 }
 
-func (db *Database) AcceptFundRequest(ctx context.Context, req models.AcceptFundRequest) error {
+func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.AcceptFundRequest) error {
 
 	type WalletTableDetails struct {
 		TableName        string
@@ -231,7 +231,7 @@ func (db *Database) AcceptFundRequest(ctx context.Context, req models.AcceptFund
 	return tx.Commit(ctx)
 }
 
-func (db *Database) RejectFundRequest(ctx context.Context, req models.RejectFundRequest) error {
+func (db *Database) RejectFundRequestQuery(ctx context.Context, req models.RejectFundRequest) error {
 	query := `
 		UPDATE fund_requests 
 		SET fund_request_status = 'REJECTED' , request_to_remarks=@request_to_remarks 
