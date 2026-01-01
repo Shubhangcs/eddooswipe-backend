@@ -107,7 +107,7 @@ func (db *Database) AdminWalletTopupQuery(ctx context.Context, req models.AdminW
 		"ledger_credit_amount": req.Amount,
 		"ledger_remarks":       remarks,
 	}); err != nil {
-		return fmt.Errorf("failed to topup admin wallet")
+		return fmt.Errorf("failed to topup admin wallet: %w",err)
 	}
 	return tx.Commit(ctx)
 }
