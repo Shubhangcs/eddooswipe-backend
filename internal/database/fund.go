@@ -39,7 +39,7 @@ func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.Creat
 		"payment_mode":      req.PaymentMode,
 		"requester_remarks": req.RequesterRemarks,
 	}); err != nil {
-		return fmt.Errorf("failed to create fund request")
+		return fmt.Errorf("failed to create fund request: %w", err)
 	}
 	return nil
 }
