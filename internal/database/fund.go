@@ -35,6 +35,7 @@ func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.Creat
 		"request_to_id":     req.RequestToID,
 		"amount":            req.Amount,
 		"account_number":    req.AccountNumber,
+		"deposit_date":      req.DepositDate,
 		"utr_number":        req.UTRNumber,
 		"payment_mode":      req.PaymentMode,
 		"requester_remarks": req.RequesterRemarks,
