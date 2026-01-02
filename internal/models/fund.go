@@ -13,9 +13,6 @@ type CreateFundRequest struct {
 
 type AcceptFundRequest struct {
 	FundRequestID    string `json:"fund_request_id" validate:"required"`
-	RequesterID      string `json:"requester_id" validate:"required"`
-	RequestToID      string `json:"request_to_id" validate:"required"`
-	Amount           string `json:"amount" validate:"required"`
 	RequestToRemarks string `json:"request_to_remarks"`
 }
 

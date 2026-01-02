@@ -67,6 +67,30 @@ func getLatestBalanceTx(ctx context.Context, tx pgx.Tx, table, walletCol, idCol,
 }
 
 func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.AcceptFundRequest) error {
+	tx, err := db.pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to start fund request transaction")
+	}
+	defer tx.Rollback(ctx)
+
+	var fundRequestDetails struct {
+		RequesterID string `json:"requester_id"`
+		RequestToID string `json:"request_to_id"`
+		Amount      string `json:"amount"`
+	}
+	getFundRequestDetails := `
+		SELECT requester_id, request_to_id, amount FROM fund_requests WHERE fund_request_id=@fund_request_id;
+	`
+
+	if err := tx.QueryRow(ctx, getFundRequestDetails, pgx.NamedArgs{
+		"fund_request_id": req.FundRequestID,
+	}).Scan(
+		&fundRequestDetails.RequesterID,
+		&fundRequestDetails.RequestToID,
+		&fundRequestDetails.Amount,
+	); err != nil {
+		return fmt.Errorf("failed to accept fund request")
+	}
 
 	type WalletTableDetails struct {
 		TableName        string
@@ -81,21 +105,15 @@ func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.Accep
 		'R': {"retailers", "retailer_id", "retailer_wallet"},
 	}
 
-	requestTo, ok := walletTableMap[req.RequestToID[0]]
+	requestTo, ok := walletTableMap[fundRequestDetails.RequestToID[0]]
 	if !ok {
 		return fmt.Errorf("invalid request_to id")
 	}
 
-	requester, ok := walletTableMap[req.RequesterID[0]]
+	requester, ok := walletTableMap[fundRequestDetails.RequesterID[0]]
 	if !ok {
 		return fmt.Errorf("invalid requester id")
 	}
-
-	tx, err := db.pool.Begin(ctx)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback(ctx)
 
 	/* -------------------- DEBIT -------------------- */
 
@@ -112,8 +130,8 @@ func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.Accep
 	)
 
 	tag, err := tx.Exec(ctx, deductQuery, pgx.NamedArgs{
-		"user_id": req.RequestToID,
-		"amount":  req.Amount,
+		"user_id": fundRequestDetails.RequestToID,
+		"amount":  fundRequestDetails.Amount,
 	})
 	if err != nil {
 		return err
@@ -128,7 +146,7 @@ func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.Accep
 		requestTo.TableName,
 		requestTo.TableWalletName,
 		requestTo.TableIDFieldName,
-		req.RequestToID,
+		fundRequestDetails.RequestToID,
 	)
 	if err != nil {
 		return err
@@ -149,10 +167,10 @@ func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.Accep
 			@latest_balance
 		)
 	`, pgx.NamedArgs{
-		"transactor_id":  req.RequestToID,
+		"transactor_id":  fundRequestDetails.RequestToID,
 		"reference_id":   req.FundRequestID,
-		"debit_amount":   req.Amount,
-		"remarks":        fmt.Sprintf("Fund transferred to %s", req.RequesterID),
+		"debit_amount":   fundRequestDetails.Amount,
+		"remarks":        fmt.Sprintf("Fund transferred to %s", fundRequestDetails.RequesterID),
 		"latest_balance": debitBalance,
 	})
 	if err != nil {
@@ -173,8 +191,8 @@ func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.Accep
 	)
 
 	_, err = tx.Exec(ctx, creditQuery, pgx.NamedArgs{
-		"user_id": req.RequesterID,
-		"amount":  req.Amount,
+		"user_id": fundRequestDetails.RequesterID,
+		"amount":  fundRequestDetails.Amount,
 	})
 	if err != nil {
 		return err
@@ -185,7 +203,7 @@ func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.Accep
 		requester.TableName,
 		requester.TableWalletName,
 		requester.TableIDFieldName,
-		req.RequesterID,
+		fundRequestDetails.RequesterID,
 	)
 	if err != nil {
 		return err
@@ -206,10 +224,10 @@ func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.Accep
 			@latest_balance
 		)
 	`, pgx.NamedArgs{
-		"transactor_id":  req.RequesterID,
+		"transactor_id":  fundRequestDetails.RequesterID,
 		"reference_id":   req.FundRequestID,
-		"credit_amount":  req.Amount,
-		"remarks":        fmt.Sprintf("Fund received from %s", req.RequestToID),
+		"credit_amount":  fundRequestDetails.Amount,
+		"remarks":        fmt.Sprintf("Fund received from %s", fundRequestDetails.RequestToID),
 		"latest_balance": creditBalance,
 	})
 	if err != nil {

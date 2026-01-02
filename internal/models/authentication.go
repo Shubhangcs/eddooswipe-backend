@@ -49,6 +49,8 @@ type CreateDistributorModel struct {
 	DistributorFirmPin            string `json:"distributor_firm_pin" validate:"required"`
 	DistributorFirmState          string `json:"distributor_firm_state" validate:"required"`
 	DistributorFirmDistrict       string `json:"distributor_firm_district" validate:"required"`
+	CreatorID                     string `json:"creator_id" validate:"required"`
+	CreatorName                   string `json:"creator_name" validate:"required"`
 }
 
 type CreateRetailerModel struct {
@@ -71,6 +73,8 @@ type CreateRetailerModel struct {
 	RetailerFirmPin            string `json:"retailer_firm_pin" validate:"required"`
 	RetailerFirmState          string `json:"retailer_firm_state" validate:"required"`
 	RetailerFirmDistrict       string `json:"retailer_firm_district" validate:"required"`
+	CreatorID                  string `json:"creator_id" validate:"required"`
+	CreatorName                string `json:"creator_name" validate:"required"`
 }
 
 type AdminLoginModel struct {

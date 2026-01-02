@@ -147,9 +147,8 @@ func (db *Database) CreateDistributorQuery(ctx context.Context, req models.Creat
     		distributor_firm_district,
     		distributor_added_by,
     		distributor_added_by_id
-		)
-		SELECT
-    		@master_distributor_id,
+		) VALUES (
+			@master_distributor_id,
     		@distributor_name,
     		@distributor_father_or_spouse_name,
     		@distributor_email,
@@ -168,11 +167,9 @@ func (db *Database) CreateDistributorQuery(ctx context.Context, req models.Creat
     		@distributor_firm_pin,
     		@distributor_firm_state,
     		@distributor_firm_district,
-    		a.admin_name,
-    		a.admin_id
-		FROM master_distributors md
-		JOIN admins a ON a.admin_id = md.admin_id
-		WHERE md.master_distributor_id = @master_distributor_id;
+			@distributor_added_by,
+			@distributor_added_by_id
+		);
 	`
 	hash, err := pkg.GenerateHashedPassword(req.DistributorPassword)
 	if err != nil {
@@ -198,6 +195,8 @@ func (db *Database) CreateDistributorQuery(ctx context.Context, req models.Creat
 		"distributor_firm_pin":              req.DistributorFirmPin,
 		"distributor_firm_state":            req.DistributorFirmState,
 		"distributor_firm_district":         req.DistributorFirmDistrict,
+		"distributor_added_by":              req.CreatorName,
+		"distributor_added_by_id":           req.CreatorID,
 	})
 
 	if err != nil {
@@ -231,9 +230,8 @@ func (db *Database) CreateRetailerQuery(ctx context.Context, req models.CreateRe
     		retailer_firm_district,
     		retailer_added_by,
     		retailer_added_by_id
-		)
-		SELECT
-    		d.distributor_id,
+		) VALUES (
+			@distributor_id,
     		@retailer_name,
     		@retailer_father_or_spouse_name,
     		@retailer_email,
@@ -252,12 +250,9 @@ func (db *Database) CreateRetailerQuery(ctx context.Context, req models.CreateRe
     		@retailer_firm_pin,
     		@retailer_firm_state,
     		@retailer_firm_district,
-    		a.admin_name,
-    		a.admin_id
-		FROM distributors d
-		JOIN master_distributors md ON md.master_distributor_id = d.master_distributor_id
-		JOIN admins a ON a.admin_id = md.admin_id
-		WHERE d.distributor_id = @distributor_id;
+    		@retailer_added_by,
+    		@retailer_added_by_id
+		);
 	`
 	hash, err := pkg.GenerateHashedPassword(req.RetailerPassword)
 	if err != nil {
@@ -283,6 +278,8 @@ func (db *Database) CreateRetailerQuery(ctx context.Context, req models.CreateRe
 		"retailer_firm_pin":              req.RetailerFirmPin,
 		"retailer_firm_state":            req.RetailerFirmState,
 		"retailer_firm_district":         req.RetailerFirmDistrict,
+		"retailer_added_by":              req.CreatorName,
+		"retailer_added_by_id":           req.CreatorID,
 	})
 
 	if err != nil {
@@ -325,19 +322,21 @@ func (db *Database) LoginAdminQuery(ctx context.Context, req models.AdminLoginMo
 
 func (db *Database) LoginMasterDistributorQuery(ctx context.Context, req models.MasterDistributorLoginModel) (*models.JWTTokenModel, error) {
 	var res struct {
+		AdminID                   string
 		MasterDistributorID       string
 		MasterDistributorName     string
 		MasterDistributorPassword string
 		IsMDBlocked               bool
 	}
 	query := `
-		SELECT master_distributor_id, master_distributor_name, master_distributor_password, is_master_distributor_blocked
+		SELECT admin_id ,master_distributor_id, master_distributor_name, master_distributor_password, is_master_distributor_blocked
 		FROM master_distributors
 		WHERE master_distributor_id=@master_distributor_id;
 	`
 	err := db.pool.QueryRow(ctx, query, pgx.NamedArgs{
 		"master_distributor_id": req.MasterDistributorID,
 	}).Scan(
+		&res.AdminID,
 		&res.MasterDistributorID,
 		&res.MasterDistributorName,
 		&res.MasterDistributorPassword,
@@ -356,22 +355,31 @@ func (db *Database) LoginMasterDistributorQuery(ctx context.Context, req models.
 	}
 
 	return &models.JWTTokenModel{
-		ID:   res.MasterDistributorID,
-		Name: res.MasterDistributorName,
+		AdminID: res.AdminID,
+		ID:      res.MasterDistributorID,
+		Name:    res.MasterDistributorName,
 	}, nil
 }
 
 func (db *Database) LoginDistributorQuery(ctx context.Context, req models.DistributorLoginModel) (*models.JWTTokenModel, error) {
 	var res struct {
+		AdminID              string
 		DistributorID        string
 		DistributorName      string
 		DistributorPassword  string
 		IsDistributorBlocked bool
 	}
 	query := `
-		SELECT distributor_id, distributor_name, distributor_password, is_distributor_blocked
-		FROM distributors
-		WHERE distributor_id=@distributor_id;
+		SELECT
+    		d.distributor_id,
+    		d.distributor_name,
+    		d.distributor_password,
+    		d.is_distributor_blocked,
+    		md.admin_id
+		FROM distributors d
+		JOIN master_distributors md
+    		ON md.master_distributor_id = d.master_distributor_id
+		WHERE d.distributor_id = @distributor_id;
 	`
 	err := db.pool.QueryRow(ctx, query, pgx.NamedArgs{
 		"distributor_id": req.DistributorID,
@@ -380,6 +388,7 @@ func (db *Database) LoginDistributorQuery(ctx context.Context, req models.Distri
 		&res.DistributorName,
 		&res.DistributorPassword,
 		&res.IsDistributorBlocked,
+		&res.AdminID,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to authenticate user")
@@ -394,22 +403,34 @@ func (db *Database) LoginDistributorQuery(ctx context.Context, req models.Distri
 	}
 
 	return &models.JWTTokenModel{
-		ID:   res.DistributorID,
-		Name: res.DistributorName,
+		AdminID: res.AdminID,
+		ID:      res.DistributorID,
+		Name:    res.DistributorName,
 	}, nil
 }
 
 func (db *Database) LoginRetailerQuery(ctx context.Context, req models.RetailerLoginModel) (*models.JWTTokenModel, error) {
 	var res struct {
+		AdminID           string
 		RetailerID        string
 		RetailerName      string
 		RetailerPassword  string
 		IsRetailerBlocked bool
 	}
 	query := `
-		SELECT retailer_id, retailer_name, retailer_password, is_retailer_blocked
-		FROM retailers
-		WHERE retailer_id=@retailer_id;
+		SELECT
+    		r.retailer_id,
+    		r.retailer_name,
+    		r.retailer_password,
+    		r.is_retailer_blocked,
+    		md.admin_id
+		FROM retailers r
+		JOIN distributors d
+    		ON d.distributor_id = r.distributor_id
+		JOIN master_distributors md
+    		ON md.master_distributor_id = d.master_distributor_id
+		WHERE r.retailer_id = @retailer_id;
+
 	`
 	err := db.pool.QueryRow(ctx, query, pgx.NamedArgs{
 		"retailer_id": req.RetailerID,
@@ -418,6 +439,7 @@ func (db *Database) LoginRetailerQuery(ctx context.Context, req models.RetailerL
 		&res.RetailerName,
 		&res.RetailerPassword,
 		&res.IsRetailerBlocked,
+		&res.AdminID,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to authenticate user")
@@ -431,7 +453,8 @@ func (db *Database) LoginRetailerQuery(ctx context.Context, req models.RetailerL
 	}
 
 	return &models.JWTTokenModel{
-		ID:   res.RetailerID,
-		Name: res.RetailerName,
+		AdminID: res.AdminID,
+		ID:      res.RetailerID,
+		Name:    res.RetailerName,
 	}, nil
 }
