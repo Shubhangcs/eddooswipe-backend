@@ -37,6 +37,7 @@ func NewRouter(cfg Config) (*Router, error) {
 	rtr.authenticationRoutes(cfg.Database, jwt)
 	rtr.usersRoutes(cfg.Database, jwt)
 	rtr.walletRoutes(cfg.Database, jwt)
+	rtr.fundRoutes(cfg.Database, jwt)
 
 	return &rtr, nil
 }

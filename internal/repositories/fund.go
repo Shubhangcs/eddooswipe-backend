@@ -13,7 +13,6 @@ type FundInterface interface {
 	CreateFundRequest(echo.Context) error
 	AcceptFundRequest(echo.Context) error
 	RejectFundRequest(echo.Context) error
-	GetAllFundRequests(echo.Context) error
 }
 
 type fundRepository struct {
@@ -46,4 +45,12 @@ func (fr *fundRepository) AcceptFundRequest(c echo.Context) error {
 	return fr.db.AcceptFundRequestQuery(ctx, req)
 }
 
-
+func (fr *fundRepository) RejectFundRequest(c echo.Context) error {
+	var req models.RejectFundRequest
+	if err := bindAndValidate(c, &req); err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return fr.db.RejectFundRequestQuery(ctx, req)
+}

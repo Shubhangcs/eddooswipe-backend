@@ -22,5 +22,4 @@ func (r *Router) authenticationRoutes(db *database.Database, jwtUtils *pkg.JWTUt
 	arg.POST("/create/md", authHandler.CreateMasterDistributorRequest)
 	arg.POST("/create/distributor", authHandler.CreateDistributorRequest)
 	arg.POST("/create/retailer", authHandler.CreateRetailerRequest)
-
 }
