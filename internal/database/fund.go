@@ -24,6 +24,7 @@ func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.Creat
 			@request_to_id,
 			@amount,
 			@account_number,
+			@deposit_date,
 			@utr_number,
 			@payment_mode,
 			'PENDING',
