@@ -8,13 +8,16 @@ import (
 	"github.com/levionstudio/eddoswipe-backend/internal/models"
 )
 
-func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.CreateFundRequest) error {
+func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.CreateFundRequestModel) error {
 	query := `
 		INSERT INTO fund_requests(
 			requester_id,
+			requester_name,
 			request_to_id,
+			request_to_name,
 			amount,
 			account_number,
+			bank_name,
 			deposit_date,
 			utr_number,
 			payment_mode,
@@ -22,9 +25,12 @@ func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.Creat
 			requester_remarks
 		) VALUES (
 			@requester_id,
+			@requester_name,
 			@request_to_id,
+			@request_to_name,
 			@amount,
 			@account_number,
+			@bank_name,
 			@deposit_date,
 			@utr_number,
 			@payment_mode,
@@ -34,9 +40,12 @@ func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.Creat
 	`
 	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
 		"requester_id":      req.RequesterID,
+		"requester_name":    req.RequesterName,
 		"request_to_id":     req.RequestToID,
+		"request_to_name":   req.RequestToName,
 		"amount":            req.Amount,
 		"account_number":    req.AccountNumber,
+		"bank_name":         req.BankName,
 		"deposit_date":      req.DepositDate,
 		"utr_number":        req.UTRNumber,
 		"payment_mode":      req.PaymentMode,
@@ -66,7 +75,7 @@ func getLatestBalanceTx(ctx context.Context, tx pgx.Tx, table, walletCol, idCol,
 	return balance, err
 }
 
-func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.AcceptFundRequest) error {
+func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.AcceptFundRequestModel) error {
 	tx, err := db.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to start fund request transaction")
@@ -252,7 +261,7 @@ func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.Accep
 	return tx.Commit(ctx)
 }
 
-func (db *Database) RejectFundRequestQuery(ctx context.Context, req models.RejectFundRequest) error {
+func (db *Database) RejectFundRequestQuery(ctx context.Context, req models.RejectFundRequestModel) error {
 	query := `
 		UPDATE fund_requests 
 		SET fund_request_status = 'REJECTED' , request_to_remarks=@request_to_remarks 
@@ -265,4 +274,130 @@ func (db *Database) RejectFundRequestQuery(ctx context.Context, req models.Rejec
 		return fmt.Errorf("failed to reject fund request")
 	}
 	return nil
+}
+
+func (db *Database) GetFundRequestByRequestToID(ctx context.Context, requestToID string) (*[]models.GetFundRequestModel, error) {
+	query := `
+		SELECT 
+			request_id,
+			requester_id,
+			requester_name,
+			request_to_id,
+			request_to_name,
+			account_number,
+			bank_name,
+			amount,
+			fund_request_status,
+			payment_mode,
+			utr_number,
+			deposit_date,
+			requester_remarks,
+			request_to_remarks,
+			created_at,
+			updated_at
+		FROM fund_requests
+		WHERE request_to_id=@request_to_id;
+	`
+	res, err := db.pool.Query(ctx, query, pgx.NamedArgs{
+		"request_to_id": requestToID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get fund request data")
+	}
+	defer res.Close()
+
+	var fundRequests []models.GetFundRequestModel
+	for res.Next() {
+		var fundRequest models.GetFundRequestModel
+		if err := res.Scan(
+			&fundRequest.RequestID,
+			&fundRequest.RequesterID,
+			&fundRequest.RequesterName,
+			&fundRequest.RequestToID,
+			&fundRequest.RequestToName,
+			&fundRequest.AccountNumber,
+			&fundRequest.BankName,
+			&fundRequest.Amount,
+			&fundRequest.FundRequestStatus,
+			&fundRequest.PaymentMode,
+			&fundRequest.UTRNumber,
+			&fundRequest.DepositDate,
+			&fundRequest.DepositDate,
+			&fundRequest.RequesterRemarks,
+			&fundRequest.RequestToRemarks,
+			&fundRequest.CreatedAt,
+			&fundRequest.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("failed to get fund request data")
+		}
+		fundRequests = append(fundRequests, fundRequest)
+	}
+
+	if res.Err() != nil {
+		return nil, fmt.Errorf("failed to get fund request data")
+	}
+	return &fundRequests, nil
+}
+
+func (db *Database) GetFundRequestByRequesterID(ctx context.Context, requesterID string) (*[]models.GetFundRequestModel, error) {
+	query := `
+		SELECT 
+			request_id,
+			requester_id,
+			requester_name,
+			request_to_id,
+			request_to_name,
+			account_number,
+			bank_name,
+			amount,
+			fund_request_status,
+			payment_mode,
+			utr_number,
+			deposit_date,
+			requester_remarks,
+			request_to_remarks,
+			created_at,
+			updated_at
+		FROM fund_requests
+		WHERE requester_id=@requester_id;
+	`
+	res, err := db.pool.Query(ctx, query, pgx.NamedArgs{
+		"requester_id": requesterID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get fund request data")
+	}
+	defer res.Close()
+
+	var fundRequests []models.GetFundRequestModel
+	for res.Next() {
+		var fundRequest models.GetFundRequestModel
+		if err := res.Scan(
+			&fundRequest.RequestID,
+			&fundRequest.RequesterID,
+			&fundRequest.RequesterName,
+			&fundRequest.RequestToID,
+			&fundRequest.RequestToName,
+			&fundRequest.AccountNumber,
+			&fundRequest.BankName,
+			&fundRequest.Amount,
+			&fundRequest.FundRequestStatus,
+			&fundRequest.PaymentMode,
+			&fundRequest.UTRNumber,
+			&fundRequest.DepositDate,
+			&fundRequest.DepositDate,
+			&fundRequest.RequesterRemarks,
+			&fundRequest.RequestToRemarks,
+			&fundRequest.CreatedAt,
+			&fundRequest.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("failed to get fund request data")
+		}
+		fundRequests = append(fundRequests, fundRequest)
+	}
+
+	if res.Err() != nil {
+		return nil, fmt.Errorf("failed to get fund request data")
+	}
+	return &fundRequests, nil
 }

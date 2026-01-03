@@ -16,4 +16,10 @@ func (r *Router) fundRoutes(db *database.Database, jwtUtils *pkg.JWTUtils) {
 	frg.POST("/create/fund/request", fundHandler.CreateFundRequest)
 	frg.POST("/accept/fund/request", fundHandler.AcceptFundRequest)
 	frg.POST("/reject/fund/request", fundHandler.RejectFundRequest)
+	frg.GET("/get/fund/request/to/admin/:id", fundHandler.GetRequestToFundRequest)
+	frg.GET("/get/fund/request/to/md/:id", fundHandler.GetRequestToFundRequest)
+	frg.GET("/get/fund/request/to/distributor/:id", fundHandler.GetRequestToFundRequest)
+	frg.GET("/get/fund/request/from/md/:id", fundHandler.GetRequesterFundRequest)
+	frg.GET("/get/fund/request/from/distributor/:id", fundHandler.GetRequesterFundRequest)
+	frg.GET("/get/fund/request/from/retailer/:id", fundHandler.GetRequesterFundRequest)
 }

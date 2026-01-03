@@ -98,7 +98,7 @@ func (db *Database) AdminWalletTopupQuery(ctx context.Context, req models.AdminW
 	res, err := tx.Exec(ctx, adminWalletBalanceUpdateQuery, pgx.NamedArgs{
 		"admin_id": req.AdminID,
 		"amount":   req.Amount,
-	}); 
+	})
 	if err != nil {
 		return fmt.Errorf("failed to update admin wallet balance")
 	}
@@ -113,9 +113,46 @@ func (db *Database) AdminWalletTopupQuery(ctx context.Context, req models.AdminW
 		"ledger_credit_amount": req.Amount,
 		"ledger_remarks":       remarks,
 	}); err != nil {
-		return fmt.Errorf("failed to topup admin wallet: %w",err)
+		return fmt.Errorf("failed to topup admin wallet: %w", err)
 	}
 	return tx.Commit(ctx)
 }
 
+func (db *Database) GetLedgerTransactionsQuery(ctx context.Context, id string) (*[]models.GetLedgerEntriesModel, error) {
+	query := `
+		SELECT ledger_trandaction_id, transactor_id, reference_id, remarks
+		credit_amount, debit_amount, latest_balance, created_at
+		FROM ledger_entries
+		WHERE transactor_id=@id;
+	`
+	res, err := db.pool.Query(ctx, query, pgx.NamedArgs{
+		"id": id,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get ledger data")
+	}
+	defer res.Close()
 
+	var transactions []models.GetLedgerEntriesModel
+	for res.Next() {
+		var transaction models.GetLedgerEntriesModel
+		if err := res.Scan(
+			&transaction.TransactionID,
+			&transaction.TransactorID,
+			&transaction.ReferenceID,
+			&transaction.Remarks,
+			&transaction.CreditAmount,
+			&transaction.DebitAmount,
+			&transaction.CreatedAT,
+		); err != nil {
+			return nil, fmt.Errorf("failed to get ledger data")
+		}
+
+		transactions = append(transactions, transaction)
+	}
+
+	if res.Err() != nil {
+		return nil, fmt.Errorf("failed to get ledger data")
+	}
+	return &transactions, nil
+}

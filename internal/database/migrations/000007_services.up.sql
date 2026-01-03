@@ -2,12 +2,15 @@ CREATE TABLE
     IF NOT EXISTS fund_requests (
         fund_request_id TEXT UNIQUE NOT NULL DEFAULT ('FR' || LPAD(nextval('fund_request_id_sequence')::TEXT, 9, '0')),
         requester_id TEXT NOT NULL,
+        requester_name TEXT NOT NULL,
         request_to_id TEXT NOT NULL,
+        request_to_name TEXT NOT NULL,
         payment_mode TEXT NOT NULL,
         deposit_date TEXT NOT NULL,
         amount NUMERIC(20, 2) NOT NULL,
         account_number TEXT NOT NULL,
-        utr_number TEXT NOT NULL,
+        bank_name TEXT NOT NULL,
+        utr_number TEXT NOT NULL UNIQUE,
         fund_request_status TEXT NOT NULL CHECK (
             fund_request_status IN ('PENDING', 'ACCEPTED', 'REJECTED')
         ),

@@ -41,3 +41,19 @@ func (fh *fundHandler) RejectFundRequest(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, models.ResponseModel{Message: "fund request rejected successfully", Status: "success"})
 }
+
+func (fh *fundHandler) GetRequestToFundRequest(c echo.Context) error {
+	res, err := fh.fundRepository.GetRequestToFundRequest(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "fund request fetched successfully", Status: "success", Data: map[string]any{"fund_requests": res}})
+}
+
+func (fh *fundHandler) GetRequesterFundRequest(c echo.Context) error {
+	res, err := fh.fundRepository.GetRequesterFundRequest(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "fund request fetched successfully", Status: "success", Data: map[string]any{"fund_requests": res}})
+}

@@ -15,6 +15,7 @@ type WalletInterface interface {
 	GetDistributorWalletBalance(echo.Context) (string, error)
 	GetRetailerWalletBalance(echo.Context) (string, error)
 	AdminWalletTopup(echo.Context) error
+	GetLedgerTransactions(c echo.Context) (*[]models.GetLedgerEntriesModel, error)
 }
 
 type walletRepository struct {
@@ -63,4 +64,11 @@ func (wr *walletRepository) AdminWalletTopup(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
 	defer cancel()
 	return wr.db.AdminWalletTopupQuery(ctx, req)
+}
+
+func (wr *walletRepository) GetLedgerTransactions(c echo.Context) (*[]models.GetLedgerEntriesModel, error) {
+	var id = c.Param("id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return wr.db.GetLedgerTransactionsQuery(ctx, id)
 }

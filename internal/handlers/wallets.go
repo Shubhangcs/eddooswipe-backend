@@ -57,3 +57,11 @@ func (wh *walletHandler) AdminWalletTopupRequest(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, models.ResponseModel{Message: "admin wallet topup success", Status: "success"})
 }
+
+func (wh *walletHandler) GetLedgerTransactionsRequest(c echo.Context) error {
+	res, err := wh.walletRepository.GetLedgerTransactions(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "ledger entries fetched successfully", Status: "success", Data: map[string]any{"ledger_entries": res}})
+}

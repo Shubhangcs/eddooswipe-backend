@@ -18,4 +18,5 @@ func (r *Router) walletRoutes(db *database.Database, jwtUtils *pkg.JWTUtils) {
 	wrg.GET("/get/balance/distributor/:distributor_id", walletHandler.GetDistributorWalletBalanceRequest)
 	wrg.GET("/get/balance/retailer/:retailer_id", walletHandler.GetRetailerWalletBalanceRequest)
 	wrg.POST("/topup/admin", walletHandler.AdminWalletTopupRequest)
+	wrg.GET("/get/ledger/entries/:id", walletHandler.GetLedgerTransactionsRequest)
 }

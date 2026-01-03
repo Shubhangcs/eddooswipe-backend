@@ -1,27 +1,30 @@
 package models
 
-type CreateFundRequest struct {
+type CreateFundRequestModel struct {
 	RequesterID      string `json:"requester_id" validate:"required"`
+	RequesterName    string `json:"requester_name" validate:"required"`
 	RequestToID      string `json:"request_to_id" validate:"required"`
+	RequestToName    string `json:"request_to_name" validate:"required"`
 	PaymentMode      string `json:"payment_mode" validate:"required"`
 	DepositDate      string `json:"deposit_date" validate:"required"`
 	Amount           string `json:"amount" validate:"required"`
 	AccountNumber    string `json:"account_number" validate:"required"`
 	UTRNumber        string `json:"utr_number" validate:"required"`
+	BankName         string `json:"bank_name" validate:"required"`
 	RequesterRemarks string `json:"remarks"`
 }
 
-type AcceptFundRequest struct {
+type AcceptFundRequestModel struct {
 	FundRequestID    string `json:"fund_request_id" validate:"required"`
 	RequestToRemarks string `json:"request_to_remarks"`
 }
 
-type RejectFundRequest struct {
+type RejectFundRequestModel struct {
 	FundRequestID    string `json:"fund_request_id" validate:"required"`
 	RequestToRemarks string `json:"request_to_remarks" validate:"required"`
 }
 
-type GetFundRequests struct {
+type GetFundRequestModel struct {
 	RequestID         string `json:"request_id"`
 	RequesterID       string `json:"requester_id"`
 	RequesterName     string `json:"requester_name"`
