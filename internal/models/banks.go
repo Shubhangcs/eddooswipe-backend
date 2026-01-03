@@ -1,7 +1,7 @@
 package models
 
 type CreateBankModel struct {
-	ID                    string `json:"id" validate:"required"`
+	UserID                string `json:"user_id" validate:"required"`
 	BankName              string `json:"bank_name" validate:"required"`
 	BankAddress           string `json:"bank_address" validate:"required"`
 	BankAccountHolderName string `json:"bank_account_holder_name" validate:"required"`
@@ -9,8 +9,8 @@ type CreateBankModel struct {
 	BankIFSCCode          string `json:"bank_ifsc_code" validate:"required"`
 }
 
-type GetBankModel struct {
-	ID                    string `json:"id"`
+type GetBanksModel struct {
+	UserID                string `json:"user_id"`
 	BankName              string `json:"bank_name"`
 	BankAddress           string `json:"bank_address"`
 	BankAccountHolderName string `json:"bank_account_holder_name"`

@@ -18,8 +18,24 @@ func NewFundHandler(fundRepository repositories.FundInterface) *fundHandler {
 	}
 }
 
-func (fh *fundHandler) CreateFundRequest(c echo.Context) error {
-	err := fh.fundRepository.CreateFundRequest(c)
+func (fh *fundHandler) CreateMasterDistributorFundRequestAdminRequest(c echo.Context) error {
+	err := fh.fundRepository.CreateMasterDistributorFundRequestAdmin(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "fund request created successfully", Status: "success"})
+}
+
+func (fh *fundHandler) CreateDistributorFundRequestAdminRequest(c echo.Context) error {
+	err := fh.fundRepository.CreateDistributorFundRequestAdmin(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "fund request created successfully", Status: "success"})
+}
+
+func (fh *fundHandler) CreateRetailerFundRequestAdminRequest(c echo.Context) error {
+	err := fh.fundRepository.CreateRetailerFundRequestAdmin(c)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
 	}

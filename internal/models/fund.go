@@ -3,15 +3,14 @@ package models
 type CreateFundRequestModel struct {
 	RequesterID      string `json:"requester_id" validate:"required"`
 	RequesterName    string `json:"requester_name" validate:"required"`
-	RequestToID      string `json:"request_to_id" validate:"required"`
-	RequestToName    string `json:"request_to_name" validate:"required"`
 	PaymentMode      string `json:"payment_mode" validate:"required"`
 	DepositDate      string `json:"deposit_date" validate:"required"`
 	Amount           string `json:"amount" validate:"required"`
-	AccountNumber    string `json:"account_number" validate:"required"`
-	UTRNumber        string `json:"utr_number" validate:"required"`
-	BankName         string `json:"bank_name" validate:"required"`
+	AccountNumber    string `json:"account_number,omitempty"`
+	UTRNumber        string `json:"utr_number,omitempty"`
+	BankName         string `json:"bank_name,omitempty"`
 	RequesterRemarks string `json:"remarks"`
+	CollectionPerson string `json:"collection_person,omitempty"`
 }
 
 type AcceptFundRequestModel struct {
@@ -39,6 +38,7 @@ type GetFundRequestModel struct {
 	DepositDate       string `json:"deposit_date"`
 	RequesterRemarks  string `json:"requester_remarks"`
 	RequestToRemarks  string `json:"request_to_remarks"`
+	CollectionPerson  string `json:"collection_person"`
 	CreatedAt         string `json:"created_at"`
 	UpdatedAt         string `json:"updated_at"`
 }

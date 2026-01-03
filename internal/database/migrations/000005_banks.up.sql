@@ -5,7 +5,7 @@ CREATE TABLE
         bank_address TEXT NOT NULL,
         bank_account_holder_name TEXT NOT NULL,
         bank_ifsc_code TEXT NOT NULL,
-        bank_account_number TEXT NOT NULL,
+        bank_account_number TEXT NOT NULL UNIQUE,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW (),
         FOREIGN KEY (admin_id) REFERENCES admins(admin_id) ON DELETE CASCADE
@@ -21,7 +21,7 @@ CREATE TABLE
         bank_address TEXT NOT NULL,
         bank_account_holder_name TEXT NOT NULL,
         bank_ifsc_code TEXT NOT NULL,
-        bank_account_number TEXT NOT NULL,
+        bank_account_number TEXT NOT NULL UNIQUE,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         FOREIGN KEY (retailer_id) REFERENCES retailers(retailer_id) ON DELETE CASCADE

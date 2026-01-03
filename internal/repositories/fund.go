@@ -10,7 +10,9 @@ import (
 )
 
 type FundInterface interface {
-	CreateFundRequest(echo.Context) error
+	CreateMasterDistributorFundRequestAdmin(echo.Context) error
+	CreateDistributorFundRequestAdmin(echo.Context) error
+	CreateRetailerFundRequestAdmin(echo.Context) error
 	AcceptFundRequest(echo.Context) error
 	RejectFundRequest(echo.Context) error
 	GetRequestToFundRequest(c echo.Context) (*[]models.GetFundRequestModel, error)
@@ -27,14 +29,34 @@ func NewFundRepository(db *database.Database) *fundRepository {
 	}
 }
 
-func (fr *fundRepository) CreateFundRequest(c echo.Context) error {
+func (fr *fundRepository) CreateMasterDistributorFundRequestAdmin(c echo.Context) error {
 	var req models.CreateFundRequestModel
 	if err := bindAndValidate(c, &req); err != nil {
 		return err
 	}
 	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
 	defer cancel()
-	return fr.db.CreateFundRequestQuery(ctx, req)
+	return fr.db.CreateMasterDistributorFundRequestAdminQuery(ctx, req)
+}
+
+func (fr *fundRepository) CreateDistributorFundRequestAdmin(c echo.Context) error {
+	var req models.CreateFundRequestModel
+	if err := bindAndValidate(c, &req); err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return fr.db.CreateDistributorFundRequestAdminQuery(ctx, req)
+}
+
+func (fr *fundRepository) CreateRetailerFundRequestAdmin(c echo.Context) error {
+	var req models.CreateFundRequestModel
+	if err := bindAndValidate(c, &req); err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return fr.db.CreateRetailerFundRequestAdminQuery(ctx, req)
 }
 
 func (fr *fundRepository) AcceptFundRequest(c echo.Context) error {

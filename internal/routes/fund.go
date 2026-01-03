@@ -13,7 +13,9 @@ func (r *Router) fundRoutes(db *database.Database, jwtUtils *pkg.JWTUtils) {
 	fundHandler := handlers.NewFundHandler(fundRepo)
 
 	frg := r.EchoRouter.Group("/funds", middlewares.JWTMiddleware(jwtUtils))
-	frg.POST("/create/fund/request", fundHandler.CreateFundRequest)
+	frg.POST("/create/fund/request/admin/md", fundHandler.CreateMasterDistributorFundRequestAdminRequest)
+	frg.POST("/create/fund/request/admin/distributor", fundHandler.CreateDistributorFundRequestAdminRequest)
+	frg.POST("/create/fund/request/admin/retailer", fundHandler.CreateRetailerFundRequestAdminRequest)
 	frg.POST("/accept/fund/request", fundHandler.AcceptFundRequest)
 	frg.POST("/reject/fund/request", fundHandler.RejectFundRequest)
 	frg.GET("/get/fund/request/to/admin/:id", fundHandler.GetRequestToFundRequest)

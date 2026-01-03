@@ -8,9 +8,10 @@ CREATE TABLE
         payment_mode TEXT NOT NULL,
         deposit_date TEXT NOT NULL,
         amount NUMERIC(20, 2) NOT NULL,
-        account_number TEXT NOT NULL,
-        bank_name TEXT NOT NULL,
-        utr_number TEXT NOT NULL UNIQUE,
+        account_number TEXT DEFAULT '',
+        bank_name TEXT DEFAULT '',
+        utr_number TEXT DEFAULT '',
+        collection_person TEXT DEFAULT '',
         fund_request_status TEXT NOT NULL CHECK (
             fund_request_status IN ('PENDING', 'ACCEPTED', 'REJECTED')
         ),

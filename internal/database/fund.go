@@ -8,7 +8,7 @@ import (
 	"github.com/levionstudio/eddoswipe-backend/internal/models"
 )
 
-func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.CreateFundRequestModel) error {
+func (db *Database) CreateMasterDistributorFundRequestAdminQuery(ctx context.Context, req models.CreateFundRequestModel) error {
 	query := `
 		INSERT INTO fund_requests(
 			requester_id,
@@ -22,12 +22,14 @@ func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.Creat
 			utr_number,
 			payment_mode,
 			fund_request_status,
-			requester_remarks
-		) VALUES (
+			requester_remarks,
+			collection_person
+		) 
+		SELECT
 			@requester_id,
 			@requester_name,
-			@request_to_id,
-			@request_to_name,
+			a.admin_id,
+			a.admin_name,
 			@amount,
 			@account_number,
 			@bank_name,
@@ -35,14 +37,16 @@ func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.Creat
 			@utr_number,
 			@payment_mode,
 			'PENDING',
-			@requester_remarks 
-		);
+			@requester_remarks
+			@collection_person
+		FROM master_distributors md
+		JOIN admins a
+			ON a.admin_id=md.admin_id
+		WHERE md.master_distributor_id=@requester_id;
 	`
 	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
 		"requester_id":      req.RequesterID,
 		"requester_name":    req.RequesterName,
-		"request_to_id":     req.RequestToID,
-		"request_to_name":   req.RequestToName,
 		"amount":            req.Amount,
 		"account_number":    req.AccountNumber,
 		"bank_name":         req.BankName,
@@ -50,6 +54,119 @@ func (db *Database) CreateFundRequestQuery(ctx context.Context, req models.Creat
 		"utr_number":        req.UTRNumber,
 		"payment_mode":      req.PaymentMode,
 		"requester_remarks": req.RequesterRemarks,
+		"collection_person": req.CollectionPerson,
+	}); err != nil {
+		return fmt.Errorf("failed to create fund request: %w", err)
+	}
+	return nil
+}
+
+func (db *Database) CreateDistributorFundRequestAdminQuery(ctx context.Context, req models.CreateFundRequestModel) error {
+	query := `
+		INSERT INTO fund_requests(
+			requester_id,
+			requester_name,
+			request_to_id,
+			request_to_name,
+			amount,
+			account_number,
+			bank_name,
+			deposit_date,
+			utr_number,
+			payment_mode,
+			fund_request_status,
+			requester_remarks,
+			collection_person
+		) 
+		SELECT
+			@requester_id,
+			@requester_name,
+			a.admin_id,
+			a.admin_name,
+			@amount,
+			@account_number,
+			@bank_name,
+			@deposit_date,
+			@utr_number,
+			@payment_mode,
+			'PENDING',
+			@requester_remarks
+			@collection_person
+		FROM distributors d
+		JOIN master_distributors md
+			ON md.master_distributor_id=d.master_distributor_id
+		JOIN admins a
+			ON a.admin_id=md.admin_id
+		WHERE d.distributor_id=@requester_id;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"requester_id":           req.RequesterID,
+		"requester_name":         req.RequesterName,
+		"amount":                 req.Amount,
+		"account_number":         req.AccountNumber,
+		"bank_name":              req.BankName,
+		"deposit_date":           req.DepositDate,
+		"utr_number":             req.UTRNumber,
+		"payment_mode":           req.PaymentMode,
+		"requester_remarks":      req.RequesterRemarks,
+		"collection_person_name": req.CollectionPerson,
+	}); err != nil {
+		return fmt.Errorf("failed to create fund request: %w", err)
+	}
+	return nil
+}
+
+func (db *Database) CreateRetailerFundRequestAdminQuery(ctx context.Context, req models.CreateFundRequestModel) error {
+	query := `
+		INSERT INTO fund_requests(
+			requester_id,
+			requester_name,
+			request_to_id,
+			request_to_name,
+			amount,
+			account_number,
+			bank_name,
+			deposit_date,
+			utr_number,
+			payment_mode,
+			fund_request_status,
+			requester_remarks,
+			collection_person
+		) 
+		SELECT
+			@requester_id,
+			@requester_name,
+			a.admin_id,
+			a.admin_name,
+			@amount,
+			@account_number,
+			@bank_name,
+			@deposit_date,
+			@utr_number,
+			@payment_mode,
+			'PENDING',
+			@requester_remarks,
+			@collection_person
+		FROM retailers r
+		JOIN distributors d
+			ON d.distributor_id=r.distributor_id
+		JOIN master_distributors md
+			ON md.master_distributor_id=d.master_distributor_id
+		JOIN admins a
+			ON a.admin_id=md.admin_id
+		WHERE r.retailer_id=@requester_id;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"requester_id":      req.RequesterID,
+		"requester_name":    req.RequesterName,
+		"amount":            req.Amount,
+		"account_number":    req.AccountNumber,
+		"bank_name":         req.BankName,
+		"deposit_date":      req.DepositDate,
+		"utr_number":        req.UTRNumber,
+		"payment_mode":      req.PaymentMode,
+		"requester_remarks": req.RequesterRemarks,
+		"collection_person": req.CollectionPerson,
 	}); err != nil {
 		return fmt.Errorf("failed to create fund request: %w", err)
 	}
@@ -293,6 +410,7 @@ func (db *Database) GetFundRequestByRequestToID(ctx context.Context, requestToID
 			deposit_date,
 			requester_remarks,
 			request_to_remarks,
+			collection_person,
 			created_at,
 			updated_at
 		FROM fund_requests
@@ -325,6 +443,7 @@ func (db *Database) GetFundRequestByRequestToID(ctx context.Context, requestToID
 			&fundRequest.DepositDate,
 			&fundRequest.RequesterRemarks,
 			&fundRequest.RequestToRemarks,
+			&fundRequest.CollectionPerson,
 			&fundRequest.CreatedAt,
 			&fundRequest.UpdatedAt,
 		); err != nil {
@@ -356,6 +475,7 @@ func (db *Database) GetFundRequestByRequesterID(ctx context.Context, requesterID
 			deposit_date,
 			requester_remarks,
 			request_to_remarks,
+			collection_person,
 			created_at,
 			updated_at
 		FROM fund_requests
@@ -388,6 +508,7 @@ func (db *Database) GetFundRequestByRequesterID(ctx context.Context, requesterID
 			&fundRequest.DepositDate,
 			&fundRequest.RequesterRemarks,
 			&fundRequest.RequestToRemarks,
+			&fundRequest.CollectionPerson,
 			&fundRequest.CreatedAt,
 			&fundRequest.UpdatedAt,
 		); err != nil {
