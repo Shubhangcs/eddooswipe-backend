@@ -221,7 +221,7 @@ func (db *Database) DeleteAdminBankQuery(ctx context.Context, accountNumber stri
 		DELETE FROM admin_banks WHERE bank_account_number=@bank_account_number;
 	`
 	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
-		"account_number": accountNumber,
+		"bank_account_number": accountNumber,
 	}); err != nil {
 		return fmt.Errorf("failed to delete admin bank")
 	}
@@ -233,7 +233,7 @@ func (db *Database) DeleteRetailerBankQuery(ctx context.Context, accountNumber s
 		DELETE FROM retailer_banks WHERE bank_account_number=@bank_account_number;
 	`
 	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
-		"account_number": accountNumber,
+		"bank_account_number": accountNumber,
 	}); err != nil {
 		return fmt.Errorf("failed to delete retailer bank")
 	}
