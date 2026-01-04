@@ -567,4 +567,5 @@ func (db *Database) BlockMasterDistributor(ctx context.Context, masterDistributo
 	}); err != nil {
 		return fmt.Errorf("failed to update master")
 	}
+	return nil
 }
