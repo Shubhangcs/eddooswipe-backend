@@ -396,7 +396,7 @@ func (db *Database) RejectFundRequestQuery(ctx context.Context, req models.Rejec
 func (db *Database) GetFundRequestByRequestToID(ctx context.Context, requestToID string) (*[]models.GetFundRequestModel, error) {
 	query := `
 		SELECT 
-			request_id,
+			fund_request_id,
 			requester_id,
 			requester_name,
 			request_to_id,
@@ -420,7 +420,7 @@ func (db *Database) GetFundRequestByRequestToID(ctx context.Context, requestToID
 		"request_to_id": requestToID,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to get fund request data")
+		return nil, fmt.Errorf("failed to get fund request data: %w", err)
 	}
 	defer res.Close()
 
@@ -447,13 +447,13 @@ func (db *Database) GetFundRequestByRequestToID(ctx context.Context, requestToID
 			&fundRequest.CreatedAt,
 			&fundRequest.UpdatedAt,
 		); err != nil {
-			return nil, fmt.Errorf("failed to get fund request data")
+			return nil, fmt.Errorf("failed to get fund request data: %w", err)
 		}
 		fundRequests = append(fundRequests, fundRequest)
 	}
 
 	if res.Err() != nil {
-		return nil, fmt.Errorf("failed to get fund request data")
+		return nil, fmt.Errorf("failed to get fund request data: %w", err)
 	}
 	return &fundRequests, nil
 }
@@ -461,7 +461,7 @@ func (db *Database) GetFundRequestByRequestToID(ctx context.Context, requestToID
 func (db *Database) GetFundRequestByRequesterID(ctx context.Context, requesterID string) (*[]models.GetFundRequestModel, error) {
 	query := `
 		SELECT 
-			request_id,
+			fund_request_id,
 			requester_id,
 			requester_name,
 			request_to_id,
@@ -485,7 +485,7 @@ func (db *Database) GetFundRequestByRequesterID(ctx context.Context, requesterID
 		"requester_id": requesterID,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to get fund request data")
+		return nil, fmt.Errorf("failed to get fund request data: %w", err)
 	}
 	defer res.Close()
 
@@ -512,13 +512,13 @@ func (db *Database) GetFundRequestByRequesterID(ctx context.Context, requesterID
 			&fundRequest.CreatedAt,
 			&fundRequest.UpdatedAt,
 		); err != nil {
-			return nil, fmt.Errorf("failed to get fund request data")
+			return nil, fmt.Errorf("failed to get fund request data: %w", err)
 		}
 		fundRequests = append(fundRequests, fundRequest)
 	}
 
 	if res.Err() != nil {
-		return nil, fmt.Errorf("failed to get fund request data")
+		return nil, fmt.Errorf("failed to get fund request data: %w", err)
 	}
 	return &fundRequests, nil
 }
