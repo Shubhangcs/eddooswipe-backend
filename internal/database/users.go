@@ -556,7 +556,7 @@ func (db *Database) GetRetailersByDistributorIDQuery(ctx context.Context, distri
 	return &retailers, nil
 }
 
-func (db *Database) BlockMasterDistributor(ctx context.Context, masterDistributorID string) error {
+func (db *Database) BlockMasterDistributorQuery(ctx context.Context, masterDistributorID string) error {
 	query := `
 		UPDATE master_distributors 
 		SET is_master_distributor_blocked = TRUE::BOOLEAN
@@ -565,7 +565,35 @@ func (db *Database) BlockMasterDistributor(ctx context.Context, masterDistributo
 	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
 		"master_distributor_id": masterDistributorID,
 	}); err != nil {
-		return fmt.Errorf("failed to update master")
+		return fmt.Errorf("failed to block master distributor")
+	}
+	return nil
+}
+
+func (db *Database) BlockDistributorQuery(ctx context.Context, distributorID string) error {
+	query := `
+		UPDATE distributors 
+		SET is_distributor_blocked = TRUE::BOOLEAN
+		WHERE distributor_id=@distributor_id;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"distributor_id": distributorID,
+	}); err != nil {
+		return fmt.Errorf("failed to block distributor")
+	}
+	return nil
+}
+
+func (db *Database) BlockRetailerQuery(ctx context.Context, retailerID string) error {
+	query := `
+		UPDATE retailers 
+		SET is_retailer_blocked = TRUE::BOOLEAN
+		WHERE retailer_id=@retailer_id;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"retailer_id": retailerID,
+	}); err != nil {
+		return fmt.Errorf("failed to block retailer")
 	}
 	return nil
 }
