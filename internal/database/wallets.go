@@ -120,7 +120,7 @@ func (db *Database) AdminWalletTopupQuery(ctx context.Context, req models.AdminW
 
 func (db *Database) GetLedgerTransactionsQuery(ctx context.Context, id string) (*[]models.GetLedgerEntriesModel, error) {
 	query := `
-		SELECT ledger_transaction_id, transactor_id, reference_id, remarks
+		SELECT ledger_transaction_id, transactor_id, reference_id, remarks,
 		credit_amount, debit_amount, latest_balance, created_at::TEXT
 		FROM ledger_entries
 		WHERE transactor_id=@id;
@@ -129,7 +129,7 @@ func (db *Database) GetLedgerTransactionsQuery(ctx context.Context, id string) (
 		"id": id,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to get ledger data")
+		return nil, fmt.Errorf("failed to get ledger data: %w", err)
 	}
 	defer res.Close()
 
@@ -143,16 +143,17 @@ func (db *Database) GetLedgerTransactionsQuery(ctx context.Context, id string) (
 			&transaction.Remarks,
 			&transaction.CreditAmount,
 			&transaction.DebitAmount,
+			&transaction.LatestBalance,
 			&transaction.CreatedAT,
 		); err != nil {
-			return nil, fmt.Errorf("failed to get ledger data")
+			return nil, fmt.Errorf("failed to get ledger data: %w", err)
 		}
 
 		transactions = append(transactions, transaction)
 	}
 
 	if res.Err() != nil {
-		return nil, fmt.Errorf("failed to get ledger data")
+		return nil, fmt.Errorf("failed to get ledger data: %w", err)
 	}
 	return &transactions, nil
 }

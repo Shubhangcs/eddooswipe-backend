@@ -13,5 +13,6 @@ type GetLedgerEntriesModel struct {
 	Remarks       string `json:"remarks"`
 	CreditAmount  string `json:"credit_amount"`
 	DebitAmount   string `json:"debit_amount"`
+	LatestBalance string `json:"latest_balance"`
 	CreatedAT     string `json:"created_at"`
 }
