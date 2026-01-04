@@ -73,7 +73,7 @@ func (db *Database) CreateRetailerBankQuery(ctx context.Context, req models.Crea
 func (db *Database) GetAdminBanksByAdminIDQuery(ctx context.Context, adminID string) (*[]models.GetBanksModel, error) {
 	query := `
 		SELECT admin_id, bank_name, bank_address, bank_account_holder_name,
-		bank_account_number, bank_ifsc_code, created_at, updated_at
+		bank_account_number, bank_ifsc_code, created_at::TEXT, updated_at::TEXT
 		FROM admin_banks
 		WHERE admin_id=@admin_id;
 	`
@@ -111,7 +111,7 @@ func (db *Database) GetAdminBanksByAdminIDQuery(ctx context.Context, adminID str
 func (db *Database) GetRetailerBanksByRetailerIDQuery(ctx context.Context, retailerID string) (*[]models.GetBanksModel, error) {
 	query := `
 		SELECT retailer_id, bank_name, bank_address, bank_account_holder_name,
-		bank_account_number, bank_ifsc_code, created_at, updated_at
+		bank_account_number, bank_ifsc_code, created_at::TEXT, updated_at::TEXT
 		FROM retailer_banks
 		WHERE retailer_id=@retailer_id;
 	`
@@ -149,7 +149,7 @@ func (db *Database) GetRetailerBanksByRetailerIDQuery(ctx context.Context, retai
 func (db *Database) GetAllAdminBanksQuery(ctx context.Context) (*[]models.GetBanksModel, error) {
 	query := `
 		SELECT admin_id, bank_name, bank_address, bank_account_holder_name,
-		bank_account_number, bank_ifsc_code, created_at, updated_at
+		bank_account_number, bank_ifsc_code, created_at::TEXT, updated_at::TEXT
 		FROM admin_banks;
 	`
 	res, err := db.pool.Query(ctx, query)
@@ -184,7 +184,7 @@ func (db *Database) GetAllAdminBanksQuery(ctx context.Context) (*[]models.GetBan
 func (db *Database) GetAllRetailerBanksQuery(ctx context.Context) (*[]models.GetBanksModel, error) {
 	query := `
 		SELECT retailer_id, bank_name, bank_address, bank_account_holder_name,
-		bank_account_number, bank_ifsc_code, created_at, updated_at
+		bank_account_number, bank_ifsc_code, created_at::TEXT, updated_at::TEXT
 		FROM retailer_banks;
 	`
 	res, err := db.pool.Query(ctx, query)

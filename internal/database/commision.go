@@ -111,3 +111,7 @@ func (db *Database) UpdateCommisionQuery(ctx context.Context, req models.UpdateC
 	}
 	return nil
 }
+
+func (db *Database) DeleteCommisionQuery(ctx context.Context, commisionID string) {
+	
+}
