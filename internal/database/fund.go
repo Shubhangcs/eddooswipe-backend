@@ -282,20 +282,20 @@ func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.Accep
 		INSERT INTO ledger_entries (
 			transactor_id,
 			reference_id,
-			debit_amount,
+			credit_amount,
 			remarks,
 			latest_balance
 		) VALUES (
 			@transactor_id,
 			@reference_id,
-			@debit_amount,
+			@credit_amount,
 			@remarks,
 			@latest_balance
 		)
 	`, pgx.NamedArgs{
 		"transactor_id":  fundRequestDetails.RequestToID,
 		"reference_id":   req.FundRequestID,
-		"debit_amount":   fundRequestDetails.Amount,
+		"credit_amount":   fundRequestDetails.Amount,
 		"remarks":        fmt.Sprintf("Fund transferred to %s", fundRequestDetails.RequesterID),
 		"latest_balance": debitBalance,
 	})
@@ -339,20 +339,20 @@ func (db *Database) AcceptFundRequestQuery(ctx context.Context, req models.Accep
 		INSERT INTO ledger_entries (
 			transactor_id,
 			reference_id,
-			credit_amount,
+			debit_amount,
 			remarks,
 			latest_balance
 		) VALUES (
 			@transactor_id,
 			@reference_id,
-			@credit_amount,
+			@debit_amount,
 			@remarks,
 			@latest_balance
 		)
 	`, pgx.NamedArgs{
 		"transactor_id":  fundRequestDetails.RequesterID,
 		"reference_id":   req.FundRequestID,
-		"credit_amount":  fundRequestDetails.Amount,
+		"debit_amount":  fundRequestDetails.Amount,
 		"remarks":        fmt.Sprintf("Fund received from %s", fundRequestDetails.RequestToID),
 		"latest_balance": creditBalance,
 	})
