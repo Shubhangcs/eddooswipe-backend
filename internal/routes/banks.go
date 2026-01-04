@@ -19,4 +19,6 @@ func (r *Router) bankRouter(db *database.Database, jwtUtils *pkg.JWTUtils) {
 	brg.GET("/get/all/retailer", bankHandler.GetAllRetailerBanksRequest)
 	brg.GET("/get/retailer/:retailer_id", bankHandler.GetRetailerBanksByRetailerIDRequest)
 	brg.GET("/get/admin/:admin_id", bankHandler.GetAdminBanksByAdminIDRequest)
+	brg.DELETE("/delete/bank/admin/:account_number", bankHandler.DeleteAdminBankRequest)
+	brg.DELETE("/delete/bank/retailer/:account_number", bankHandler.DeleteRetailerBankRequest)
 }

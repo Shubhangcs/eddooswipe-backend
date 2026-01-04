@@ -121,7 +121,7 @@ func (db *Database) AdminWalletTopupQuery(ctx context.Context, req models.AdminW
 func (db *Database) GetLedgerTransactionsQuery(ctx context.Context, id string) (*[]models.GetLedgerEntriesModel, error) {
 	query := `
 		SELECT ledger_trandaction_id, transactor_id, reference_id, remarks
-		credit_amount, debit_amount, latest_balance, created_at
+		credit_amount, debit_amount, latest_balance, created_at::TEXT
 		FROM ledger_entries
 		WHERE transactor_id=@id;
 	`
