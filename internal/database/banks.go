@@ -215,3 +215,27 @@ func (db *Database) GetAllRetailerBanksQuery(ctx context.Context) (*[]models.Get
 	}
 	return &retailerBanks, nil
 }
+
+func (db *Database) DeleteAdminBankQuery(ctx context.Context, accountNumber string) error {
+	query := `
+		DELETE FROM admin_banks WHERE bank_account_number=@bank_account_number;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"account_number": accountNumber,
+	}); err != nil {
+		return fmt.Errorf("failed to delete admin bank")
+	}
+	return nil
+}
+
+func (db *Database) DeleteRetailerBankQuery(ctx context.Context, accountNumber string) error {
+	query := `
+		DELETE FROM retailer_banks WHERE bank_account_number=@bank_account_number;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"account_number": accountNumber,
+	}); err != nil {
+		return fmt.Errorf("failed to delete retailer bank")
+	}
+	return nil
+}

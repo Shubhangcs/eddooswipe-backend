@@ -16,6 +16,8 @@ type BankInterface interface {
 	GetRetailerBanksByRetailerID(echo.Context) (*[]models.GetBanksModel, error)
 	GetAllAdminBanks(echo.Context) (*[]models.GetBanksModel, error)
 	GetAllRetailerBanks(echo.Context) (*[]models.GetBanksModel, error)
+	DeleteAdminBank(echo.Context) error
+	DeleteRetailerBank(echo.Context) error
 }
 
 type bankRepository struct {
@@ -72,4 +74,18 @@ func (br *bankRepository) GetAllRetailerBanks(c echo.Context) (*[]models.GetBank
 	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
 	defer cancel()
 	return br.db.GetAllRetailerBanksQuery(ctx)
+}
+
+func (br *bankRepository) DeleteAdminBank(c echo.Context) error {
+	var accountNumber = c.Param("account_number")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return br.db.DeleteAdminBankQuery(ctx, accountNumber)
+}
+
+func (br *bankRepository) DeleteRetailerBank(c echo.Context) error {
+	var accountNumber = c.Param("account_number")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return br.db.DeleteRetailerBankQuery(ctx, accountNumber)
 }
