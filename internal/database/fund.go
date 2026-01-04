@@ -411,8 +411,8 @@ func (db *Database) GetFundRequestByRequestToID(ctx context.Context, requestToID
 			requester_remarks,
 			request_to_remarks,
 			collection_person,
-			created_at,
-			updated_at
+			created_at::TEXT,
+			updated_at::TEXT
 		FROM fund_requests
 		WHERE request_to_id=@request_to_id;
 	`
@@ -476,8 +476,8 @@ func (db *Database) GetFundRequestByRequesterID(ctx context.Context, requesterID
 			requester_remarks,
 			request_to_remarks,
 			collection_person,
-			created_at,
-			updated_at
+			created_at::TEXT,
+			updated_at::TEXT
 		FROM fund_requests
 		WHERE requester_id=@requester_id;
 	`

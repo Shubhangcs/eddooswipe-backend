@@ -13,6 +13,7 @@ type CommisionInterface interface {
 	CreateCommision(echo.Context) error
 	GetAllCommisions(echo.Context) (*[]models.GetCommisionsModel, error)
 	UpdateCommision(echo.Context) error
+	DeleteCommision(echo.Context) error
 }
 
 type commisionRepository struct {
@@ -41,4 +42,19 @@ func (cr *commisionRepository) GetAllCommisions(c echo.Context) (*[]models.GetCo
 	return cr.db.GetAllCommisionsQuery(ctx)
 }
 
-// func (cr *commisionRepository) UpdateCommision
+func (cr *commisionRepository) UpdateCommision(c echo.Context) error {
+	var req models.UpdateCommisionModel
+	if err := bindAndValidate(c, &req); err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return cr.db.UpdateCommisionQuery(ctx, req)
+}
+
+func (cr *commisionRepository) DeleteCommision(c echo.Context) error {
+	var commisionID = c.Param("commision_id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return cr.db.DeleteCommisionQuery(ctx, commisionID)
+}

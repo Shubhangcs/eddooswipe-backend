@@ -18,5 +18,5 @@ func (r *Router) bankRouter(db *database.Database, jwtUtils *pkg.JWTUtils) {
 	brg.GET("/get/all/admin", bankHandler.GetAllAdminBanksRequest)
 	brg.GET("/get/all/retailer", bankHandler.GetAllRetailerBanksRequest)
 	brg.GET("/get/retailer/:retailer_id", bankHandler.GetRetailerBanksByRetailerIDRequest)
-	brg.GET("/get/admin/:admin", bankHandler.GetAdminBanksByAdminIDRequest)
+	brg.GET("/get/admin/:admin_id", bankHandler.GetAdminBanksByAdminIDRequest)
 }

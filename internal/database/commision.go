@@ -52,9 +52,9 @@ func (db *Database) CreateCommisionQuery(ctx context.Context, req models.CreateC
 func (db *Database) GetAllCommisionsQuery(ctx context.Context) (*[]models.GetCommisionsModel, error) {
 	query := `
 		SELECT commision_id, operator_id, operator_name,
-		slab_start, slab_end, total_commision, admin_commision,
-		master_distributor_commision, distributor_commision,
-		retailer_commision, created_at, updated_at
+		slab_start::TEXT, slab_end::TEXT, total_commision::TEXT, admin_commision::TEXT,
+		master_distributor_commision::TEXT, distributor_commision::TEXT,
+		retailer_commision::TEXT, created_at::TEXT, updated_at::TEXT
 		FROM commisions;
 	`
 	res, err := db.pool.Query(ctx, query)
@@ -112,6 +112,14 @@ func (db *Database) UpdateCommisionQuery(ctx context.Context, req models.UpdateC
 	return nil
 }
 
-func (db *Database) DeleteCommisionQuery(ctx context.Context, commisionID string) {
-	
+func (db *Database) DeleteCommisionQuery(ctx context.Context, commisionID string) error {
+	query := `
+		DELETE FROM commisions WHERE commision_id=@commision_id;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"commision_id": commisionID,
+	}); err != nil {
+		return fmt.Errorf("failed to delete commision")
+	}
+	return nil
 }
