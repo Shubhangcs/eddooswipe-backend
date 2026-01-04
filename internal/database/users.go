@@ -555,3 +555,16 @@ func (db *Database) GetRetailersByDistributorIDQuery(ctx context.Context, distri
 
 	return &retailers, nil
 }
+
+func (db *Database) BlockMasterDistributor(ctx context.Context, masterDistributorID string) error {
+	query := `
+		UPDATE master_distributors 
+		SET is_master_distributor_blocked = TRUE::BOOLEAN
+		WHERE master_distributor_id=@master_distributor_id;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"master_distributor_id": masterDistributorID,
+	}); err != nil {
+		return fmt.Errorf("failed to update master")
+	}
+}

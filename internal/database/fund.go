@@ -37,7 +37,7 @@ func (db *Database) CreateMasterDistributorFundRequestAdminQuery(ctx context.Con
 			@utr_number,
 			@payment_mode,
 			'PENDING',
-			@requester_remarks
+			@requester_remarks,
 			@collection_person
 		FROM master_distributors md
 		JOIN admins a
