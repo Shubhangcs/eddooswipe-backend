@@ -11,6 +11,7 @@ type GetAdminModel struct {
 }
 
 type GetMasterDistributorModel struct {
+	AdminID                             string `json:"admin_id"`
 	MasterDistributorID                 string `json:"master_distributor_id"`
 	MasterDistributorName               string `json:"master_distributor_name"`
 	MasterDistributorFatherOrSpouseName string `json:"master_distributor_father_or_spouse_name,omitempty"`
@@ -39,6 +40,7 @@ type GetMasterDistributorModel struct {
 }
 
 type GetDistributorModel struct {
+	MasterDistributorID           string `json:"master_distributor_id"`
 	DistributorID                 string `json:"distributor_id"`
 	DistributorName               string `json:"distributor_name"`
 	DistributorFatherOrSpouseName string `json:"distributor_father_or_spouse_name,omitempty"`
@@ -67,6 +69,7 @@ type GetDistributorModel struct {
 }
 
 type GetRetailerModel struct {
+	DistributorID              string `json:"distributor_id"`
 	RetailerID                 string `json:"retailer_id"`
 	RetailerName               string `json:"retailer_name"`
 	RetailerFatherOrSpouseName string `json:"retailer_father_or_spouse_name,omitempty"`

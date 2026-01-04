@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS admins;
+DROP TABLE IF EXISTS retailers;
 
-DROP TRIGGER IF EXISTS trg_admins_updated_at ON admins;
+DROP TRIGGER IF EXISTS trg_retailers_updated_at ON retailers;
 
 DROP TABLE IF EXISTS master_distributors;
 
@@ -10,6 +10,6 @@ DROP TABLE IF EXISTS distributors;
 
 DROP TRIGGER IF EXISTS trg_distributors_updated_at ON distributors;
 
-DROP TABLE IF EXISTS retailers;
+DROP TABLE IF EXISTS admins;
 
-DROP TRIGGER IF EXISTS trg_retailers_updated_at ON retailers;
+DROP TRIGGER IF EXISTS trg_admins_updated_at ON admins;

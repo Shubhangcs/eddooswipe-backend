@@ -46,6 +46,7 @@ func (db *Database) GetAllAdminsQuery(ctx context.Context) (*[]models.GetAdminMo
 func (db *Database) GetAllMasterDistributorsQuery(ctx context.Context) (*[]models.GetMasterDistributorModel, error) {
 	query := `
 		SELECT
+			admin_id,
 			master_distributor_id,
 			master_distributor_name,
 			master_distributor_father_or_spouse_name,
@@ -86,6 +87,7 @@ func (db *Database) GetAllMasterDistributorsQuery(ctx context.Context) (*[]model
 		var md models.GetMasterDistributorModel
 
 		if err := rows.Scan(
+			&md.AdminID,
 			&md.MasterDistributorID,
 			&md.MasterDistributorName,
 			&md.MasterDistributorFatherOrSpouseName,
@@ -128,6 +130,7 @@ func (db *Database) GetAllMasterDistributorsQuery(ctx context.Context) (*[]model
 func (db *Database) GetAllDistributorsQuery(ctx context.Context) (*[]models.GetDistributorModel, error) {
 	query := `
 		SELECT
+			master_distributor_id,
 			distributor_id,
 			distributor_name,
 			distributor_father_or_spouse_name,
@@ -168,6 +171,7 @@ func (db *Database) GetAllDistributorsQuery(ctx context.Context) (*[]models.GetD
 		var d models.GetDistributorModel
 
 		if err := rows.Scan(
+			&d.MasterDistributorID,
 			&d.DistributorID,
 			&d.DistributorName,
 			&d.DistributorFatherOrSpouseName,
@@ -210,6 +214,7 @@ func (db *Database) GetAllDistributorsQuery(ctx context.Context) (*[]models.GetD
 func (db *Database) GetAllRetailersQuery(ctx context.Context) (*[]models.GetRetailerModel, error) {
 	query := `
 		SELECT
+			distributor_id,
 			retailer_id,
 			retailer_name,
 			retailer_father_or_spouse_name,
@@ -250,6 +255,7 @@ func (db *Database) GetAllRetailersQuery(ctx context.Context) (*[]models.GetReta
 		var r models.GetRetailerModel
 
 		if err := rows.Scan(
+			&r.DistributorID,
 			&r.RetailerID,
 			&r.RetailerName,
 			&r.RetailerFatherOrSpouseName,
@@ -292,6 +298,7 @@ func (db *Database) GetAllRetailersQuery(ctx context.Context) (*[]models.GetReta
 func (db *Database) GetMasterDistributorsByAdminIDQuery(ctx context.Context, adminID string) (*[]models.GetMasterDistributorModel, error) {
 	query := `
 		SELECT
+			admin_id,
 			master_distributor_id,
 			master_distributor_name,
 			master_distributor_father_or_spouse_name,
@@ -335,6 +342,7 @@ func (db *Database) GetMasterDistributorsByAdminIDQuery(ctx context.Context, adm
 		var md models.GetMasterDistributorModel
 
 		if err := rows.Scan(
+			&md.AdminID,
 			&md.MasterDistributorID,
 			&md.MasterDistributorName,
 			&md.MasterDistributorFatherOrSpouseName,
@@ -377,6 +385,7 @@ func (db *Database) GetMasterDistributorsByAdminIDQuery(ctx context.Context, adm
 func (db *Database) GetDistributorsByMasterDistributorIDQuery(ctx context.Context, masterDistributorID string) (*[]models.GetDistributorModel, error) {
 	query := `
 		SELECT
+			master_distributor_id,
 			distributor_id,
 			distributor_name,
 			distributor_father_or_spouse_name,
@@ -420,6 +429,7 @@ func (db *Database) GetDistributorsByMasterDistributorIDQuery(ctx context.Contex
 		var d models.GetDistributorModel
 
 		if err := rows.Scan(
+			&d.MasterDistributorID,
 			&d.DistributorID,
 			&d.DistributorName,
 			&d.DistributorFatherOrSpouseName,
@@ -462,6 +472,7 @@ func (db *Database) GetDistributorsByMasterDistributorIDQuery(ctx context.Contex
 func (db *Database) GetRetailersByDistributorIDQuery(ctx context.Context, distributorID string) (*[]models.GetRetailerModel, error) {
 	query := `
 		SELECT
+			distributor_id,
 			retailer_id,
 			retailer_name,
 			retailer_father_or_spouse_name,
@@ -505,6 +516,7 @@ func (db *Database) GetRetailersByDistributorIDQuery(ctx context.Context, distri
 		var r models.GetRetailerModel
 
 		if err := rows.Scan(
+			&r.DistributorID,
 			&r.RetailerID,
 			&r.RetailerName,
 			&r.RetailerFatherOrSpouseName,

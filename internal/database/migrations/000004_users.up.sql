@@ -1,6 +1,6 @@
 CREATE TABLE
     IF NOT EXISTS admins (
-        admin_id TEXT UNIQUE NOT NULL DEFAULT ('A' || LPAD(nextval('admin_id_sequence')::TEXT, 9, '0')),
+        admin_id TEXT PRIMARY KEY NOT NULL DEFAULT ('A' || LPAD(nextval('admin_id_sequence')::TEXT, 9, '0')),
         admin_name TEXT NOT NULL,
         admin_email TEXT NOT NULL UNIQUE,
         admin_phone TEXT NOT NULL UNIQUE,
@@ -16,7 +16,7 @@ CREATE TRIGGER trg_admins_updated_at BEFORE UPDATE ON admins
 CREATE TABLE
     IF NOT EXISTS master_distributors (
         admin_id TEXT NOT NULL,
-        master_distributor_id TEXT UNIQUE NOT NULL DEFAULT ('MD' || LPAD(nextval('master_distributor_id_sequence')::TEXT, 9, '0')),
+        master_distributor_id TEXT PRIMARY KEY NOT NULL DEFAULT ('MD' || LPAD(nextval('master_distributor_id_sequence')::TEXT, 9, '0')),
         master_distributor_name TEXT NOT NULL,
         master_distributor_father_or_spouse_name TEXT NOT NULL DEFAULT '',
         master_distributor_email TEXT NOT NULL UNIQUE,
@@ -51,7 +51,7 @@ CREATE TRIGGER trg_master_distributors_updated_at BEFORE UPDATE ON master_distri
 CREATE TABLE
     IF NOT EXISTS distributors (
         master_distributor_id TEXT NOT NULL,
-        distributor_id TEXT UNIQUE NOT NULL DEFAULT ('D' || LPAD(nextval('distributor_id_sequence')::TEXT, 9, '0')),
+        distributor_id TEXT PRIMARY KEY NOT NULL DEFAULT ('D' || LPAD(nextval('distributor_id_sequence')::TEXT, 9, '0')),
         distributor_name TEXT NOT NULL,
         distributor_father_or_spouse_name TEXT NOT NULL DEFAULT '',
         distributor_email TEXT NOT NULL UNIQUE,
@@ -86,7 +86,7 @@ CREATE TRIGGER trg_distributors_updated_at BEFORE UPDATE ON distributors
 CREATE TABLE
     IF NOT EXISTS retailers (
         distributor_id TEXT NOT NULL,
-        retailer_id TEXT UNIQUE NOT NULL DEFAULT ('R' || LPAD(nextval('retailer_id_sequence')::TEXT, 9, '0')),
+        retailer_id TEXT PRIMARY KEY NOT NULL DEFAULT ('R' || LPAD(nextval('retailer_id_sequence')::TEXT, 9, '0')),
         retailer_name TEXT NOT NULL,
         retailer_father_or_spouse_name TEXT NOT NULL DEFAULT '',
         retailer_email TEXT NOT NULL UNIQUE,
