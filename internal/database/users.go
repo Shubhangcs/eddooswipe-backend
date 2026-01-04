@@ -597,3 +597,45 @@ func (db *Database) BlockRetailerQuery(ctx context.Context, retailerID string) e
 	}
 	return nil
 }
+
+func (db *Database) UnBlockMasterDistributorQuery(ctx context.Context, masterDistributorID string) error {
+	query := `
+		UPDATE master_distributors 
+		SET is_master_distributor_blocked = FALSE::BOOLEAN
+		WHERE master_distributor_id=@master_distributor_id;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"master_distributor_id": masterDistributorID,
+	}); err != nil {
+		return fmt.Errorf("failed to unblock master distributor")
+	}
+	return nil
+}
+
+func (db *Database) UnBlockDistributorQuery(ctx context.Context, distributorID string) error {
+	query := `
+		UPDATE distributors 
+		SET is_distributor_blocked = FALSE::BOOLEAN
+		WHERE distributor_id=@distributor_id;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"distributor_id": distributorID,
+	}); err != nil {
+		return fmt.Errorf("failed to unblock distributor")
+	}
+	return nil
+}
+
+func (db *Database) UnBlockRetailerQuery(ctx context.Context, retailerID string) error {
+	query := `
+		UPDATE retailers 
+		SET is_retailer_blocked = FALSE::BOOLEAN
+		WHERE retailer_id=@retailer_id;
+	`
+	if _, err := db.pool.Exec(ctx, query, pgx.NamedArgs{
+		"retailer_id": retailerID,
+	}); err != nil {
+		return fmt.Errorf("failed to unblock retailer")
+	}
+	return nil
+}

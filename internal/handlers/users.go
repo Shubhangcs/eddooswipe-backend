@@ -73,3 +73,52 @@ func (uh *usersHandler) GetRetailersByDistributorIDRequest(c echo.Context) error
 	}
 	return c.JSON(http.StatusOK, models.ResponseModel{Message: "retailers fetched successfully", Status: "success", Data: map[string]any{"retailers": res}})
 }
+
+func (uh *usersHandler) BlockMasterDistributorRequest(c echo.Context) error {
+	err := uh.usersRepository.BlockMasterDistributor(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "master distributor blocked successfully", Status: "success"})
+}
+
+func (uh *usersHandler) BlockDistributorRequest(c echo.Context) error {
+	err := uh.usersRepository.BlockDistributor(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "distributor blocked successfully", Status: "success"})
+}
+
+func (uh *usersHandler) BlockRetailerRequest(c echo.Context) error {
+	err := uh.usersRepository.BlockRetailer(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "retailer blocked successfully", Status: "success"})
+}
+
+
+func (uh *usersHandler) UnBlockMasterDistributorRequest(c echo.Context) error {
+	err := uh.usersRepository.UnBlockMasterDistributor(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "master distributor unblocked successfully", Status: "success"})
+}
+
+func (uh *usersHandler) UnBlockDistributorRequest(c echo.Context) error {
+	err := uh.usersRepository.UnBlockDistributor(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "distributor unblocked successfully", Status: "success"})
+}
+
+func (uh *usersHandler) UnBlockRetailerRequest(c echo.Context) error {
+	err := uh.usersRepository.UnBlockRetailer(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "retailer unblocked successfully", Status: "success"})
+}

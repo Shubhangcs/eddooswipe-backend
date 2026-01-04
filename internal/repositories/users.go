@@ -18,6 +18,12 @@ type UsersInterface interface {
 	GetMasterDistributorsByAdminID(echo.Context) (*[]models.GetMasterDistributorModel, error)
 	GetDistributorsByMasterDistributorID(echo.Context) (*[]models.GetDistributorModel, error)
 	GetRetailersByDistributorID(echo.Context) (*[]models.GetRetailerModel, error)
+	BlockMasterDistributor(echo.Context) error
+	BlockDistributor(echo.Context) error
+	BlockRetailer(echo.Context) error
+	UnBlockMasterDistributor(echo.Context) error
+	UnBlockDistributor(echo.Context) error
+	UnBlockRetailer(echo.Context) error
 }
 
 type usersRepository struct {
@@ -75,4 +81,46 @@ func (ur *usersRepository) GetRetailersByDistributorID(c echo.Context) (*[]model
 	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
 	defer cancel()
 	return ur.db.GetRetailersByDistributorIDQuery(ctx, distributorID)
+}
+
+func (ur *usersRepository) BlockMasterDistributor(c echo.Context) error {
+	var masterDistributorID = c.Param("master_distributor_id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return ur.db.BlockMasterDistributorQuery(ctx, masterDistributorID)
+}
+
+func (ur *usersRepository) BlockDistributor(c echo.Context) error {
+	var distributorID = c.Param("distributor_id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return ur.db.BlockMasterDistributorQuery(ctx, distributorID)
+}
+
+func (ur *usersRepository) BlockRetailer(c echo.Context) error {
+	var retailerID = c.Param("retailer_id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return ur.db.BlockMasterDistributorQuery(ctx, retailerID)
+}
+
+func (ur *usersRepository) UnBlockMasterDistributor(c echo.Context) error {
+	var masterDistributorID = c.Param("master_distributor_id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return ur.db.UnBlockMasterDistributorQuery(ctx, masterDistributorID)
+}
+
+func (ur *usersRepository) UnBlockDistributor(c echo.Context) error {
+	var distributorID = c.Param("distributor_id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return ur.db.UnBlockMasterDistributorQuery(ctx, distributorID)
+}
+
+func (ur *usersRepository) UnBlockRetailer(c echo.Context) error {
+	var retailerID = c.Param("retailer_id")
+	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
+	defer cancel()
+	return ur.db.UnBlockMasterDistributorQuery(ctx, retailerID)
 }
