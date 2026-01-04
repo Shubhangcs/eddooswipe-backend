@@ -41,4 +41,4 @@ func (cr *commisionRepository) GetAllCommisions(c echo.Context) (*[]models.GetCo
 	return cr.db.GetAllCommisionsQuery(ctx)
 }
 
-func (cr *commisionRepository) UpdateCommision
+// func (cr *commisionRepository) UpdateCommision
