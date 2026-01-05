@@ -8,7 +8,7 @@ import (
 )
 
 func (r *Router) dmtRouter(db *database.Database, jwtUtils *pkg.JWTUtils) {
-	dmtRepo := repositories.NewDMTRepository(db)
+	dmtRepo := repositories.NewDMTRepository(db,jwtUtils)
 	dmtHandler := handlers.NewDMTHandler(dmtRepo)
 
 	r.EchoRouter.GET("/dmt/register", dmtHandler.RegisterMerchantRequest)
