@@ -1,8 +1,10 @@
 package repositories
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/levionstudio/eddoswipe-backend/internal/database"
@@ -23,9 +25,11 @@ func NewDMTRepository(db *database.Database) *dmtRepository {
 }
 
 func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
-	url := "https://sit.paysprint.in/service-api/api/v1/service/dmt-v6/merchant/register"
+	url := "https://sit.paysprint.in/service-api/api/v1/service/dmt/kyc/remitter/queryremitter"
 
-	req, _ := http.NewRequest("POST", url, nil)
+	payload := strings.NewReader("{\"mobile\":8888899999}")
+
+	req, _ := http.NewRequest("POST", url, payload)
 
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("Token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJQQVlTUFJJTlQiLCJ0aW1lc3RhbXAiOjE2MTAwMjYzMzgsInBhcnRuZXJJZCI6IlBTMDAxIiwicHJvZHVjdCI6IldBTExFVCIsInJlcWlkIjoxNjEwMDI2MzM4fQ.buzD40O8X_41RmJ0PCYbBYx3IBlsmNb9iVmrVH9Ix64")
@@ -39,6 +43,10 @@ func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
 	defer res.Body.Close()
 	body, _ := io.ReadAll(res.Body)
 
+	var response any
+	if err := json.Unmarshal(body, &response); err != nil {
+		return nil, err
+	}
 
-	return string(body), nil
+	return response, nil
 }
