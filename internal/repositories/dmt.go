@@ -39,5 +39,6 @@ func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
 	defer res.Body.Close()
 	body, _ := io.ReadAll(res.Body)
 
-	return body, nil
+
+	return string(body), nil
 }
