@@ -23,7 +23,7 @@ func NewDMTRepository(db *database.Database) *dmtRepository {
 }
 
 func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
-	url := "https://xyz.xyz.in/service-api/api/v1/service/dmt-v6/merchant/register"
+	url := "https://sit.paysprint.in/service-api/api/v1/service/dmt-v6/merchant/register"
 
 	req, _ := http.NewRequest("POST", url, nil)
 
