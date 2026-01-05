@@ -25,14 +25,13 @@ func NewDMTRepository(db *database.Database) *dmtRepository {
 }
 
 func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
-	url := "https://sit.paysprint.in/service-api/api/v1/service/dmt/kyc/remitter/queryremitter"
+	url := "https://api.paysprint.in/api/v1/service/dmt/kyc/remitter/queryremitter"
 
 	payload := strings.NewReader("{\"mobile\":9773870841}")
 
 	req, _ := http.NewRequest("POST", url, payload)
 
 	req.Header.Add("accept", "application/json")
-	req.Header.Add("Token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJQQVlTUFJJTlQiLCJ0aW1lc3RhbXAiOjE2MTAwMjYzMzgsInBhcnRuZXJJZCI6IlBTMDAxIiwicHJvZHVjdCI6IldBTExFVCIsInJlcWlkIjoxNjEwMDI2MzM4fQ.buzD40O8X_41RmJ0PCYbBYx3IBlsmNb9iVmrVH9Ix64")
 	req.Header.Add("authorized_key", "UFMwMDI3NDZmZjUyNjIzZmM3OGM2MzJhYWIwMTAzYmRjZjFlYTgzMQ==")
 	req.Header.Add("content-type", "application/json")
 
