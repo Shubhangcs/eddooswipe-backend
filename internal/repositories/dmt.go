@@ -25,7 +25,7 @@ func NewDMTRepository(db *database.Database) *dmtRepository {
 }
 
 func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
-	url := "https://api.paysprint.in/api/v1/service/dmt/kyc/remitter/queryremitter"
+	url := "https://sit.paysprint.in/service-api/api/v1/service/dmt/kyc/remitter/queryremitter"
 
 	payload := strings.NewReader("{\"mobile\":9773870841}")
 
