@@ -33,6 +33,7 @@ func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
 
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("authorized_key", "UFMwMDI3NDZmZjUyNjIzZmM3OGM2MzJhYWIwMTAzYmRjZjFlYTgzMQ==")
+	req.Header.Add("Token" , "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXJ0bmVySWQiOiJQUzAwMjc0NiIsInJlcWlkIjoiMTIyMzM3NzMiLCJ0aW1lc3RhbXAiOjE3Njc2MzQ5NTAwODR9.krn2LQYGjNKAsoyb_AhgPiJ8Plakse5WHLnbTIGn8ow")
 	req.Header.Add("content-type", "application/json")
 
 	res, err := http.DefaultClient.Do(req)
