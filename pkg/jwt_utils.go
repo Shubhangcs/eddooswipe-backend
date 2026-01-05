@@ -5,27 +5,51 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"github.com/levionstudio/eddoswipe-backend/internal/models"
 )
 
 type JWTUtils struct {
-	secretKey string
-	duration  time.Duration
+	secretKey          string
+	duration           time.Duration
+	paySprintSecretKey string
 }
 
 type Config struct {
-	SecretKey string
-	Expiry    time.Duration
+	SecretKey          string
+	Expiry             time.Duration
+	PaySprintSecretKey string
 }
 
 func NewJWTUtils(cfg Config) (*JWTUtils, error) {
-	if cfg.SecretKey == "" || cfg.Expiry == 0 {
+	if cfg.SecretKey == "" || cfg.Expiry == 0 || cfg.PaySprintSecretKey == "" {
 		return nil, fmt.Errorf("failed to create jwt utils fields are empty")
 	}
 	return &JWTUtils{
-		secretKey: cfg.SecretKey,
-		duration:  cfg.Expiry,
+		secretKey:          cfg.SecretKey,
+		duration:           cfg.Expiry,
+		paySprintSecretKey: cfg.PaySprintSecretKey,
 	}, nil
+}
+
+func (ju *JWTUtils) GenerateTokenForPaysprint() (string, error) {
+	// Payload (same as PHP associative array)
+	claims := jwt.MapClaims{
+		"timestamp": time.Now().Unix(),
+		"partnerId": "PS002746",
+		"reqid":     uuid.NewString(),
+	}
+
+	// Create token with HS256
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Sign token
+	tokenString, err := token.SignedString([]byte(ju.paySprintSecretKey))
+	if err != nil {
+		return "", fmt.Errorf("failed to generate token")
+	}
+
+	return tokenString, nil
 }
 
 func (ju *JWTUtils) GenerateToken(data models.JWTTokenModel) (string, error) {

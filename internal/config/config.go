@@ -19,8 +19,9 @@ type DatabaseConfig struct {
 }
 
 type JWTConfig struct {
-	JWTSecretKey string
-	JWTExpiry    time.Duration
+	JWTSecretKey          string
+	JWTSecretKeyPaySprint string
+	JWTExpiry             time.Duration
 }
 
 type ServerConfig struct {
@@ -40,6 +41,7 @@ func Load() (*Config, error) {
 		},
 		JWT: JWTConfig{
 			JWTSecretKey: os.Getenv("JWT_SECRET_KEY"),
+			JWTSecretKeyPaySprint: os.Getenv("PAY_SPRINT_JWT_KEY"),
 			JWTExpiry:    24 * time.Hour,
 		},
 		Server: ServerConfig{

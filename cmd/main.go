@@ -45,6 +45,7 @@ func run() error {
 		Database:     db,
 		JWTSecretKey: cfg.JWT.JWTSecretKey,
 		JWTExpiry:    cfg.JWT.JWTExpiry,
+		JWTSecretKeyPaySprint: cfg.JWT.JWTSecretKeyPaySprint,
 	})
 	if err != nil {
 		return err

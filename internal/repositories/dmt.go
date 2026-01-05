@@ -8,6 +8,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/levionstudio/eddoswipe-backend/internal/database"
+	"github.com/levionstudio/eddoswipe-backend/pkg"
 )
 
 type DMTInterface interface {
@@ -15,25 +16,31 @@ type DMTInterface interface {
 }
 
 type dmtRepository struct {
-	db *database.Database
+	db       *database.Database
+	jwtUtils *pkg.JWTUtils
 }
 
-func NewDMTRepository(db *database.Database) *dmtRepository {
+func NewDMTRepository(db *database.Database, jwtUtils *pkg.JWTUtils) *dmtRepository {
 	return &dmtRepository{
 		db,
+		jwtUtils,
 	}
 }
 
 func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
-	url := "https://api.paysprint.in/api/v1/service/dmt/kyc/remitter/queryremitter"
+	url := "https://api.paysprint.in/api/v1/service/service/dmt-v6/merchant/status_check"
 
-	payload := strings.NewReader("{\"mobile\":9773870841}")
+	payload := strings.NewReader("{\"merchantcode\":PS002746}")
 
 	req, _ := http.NewRequest("POST", url, payload)
+	token, err := dr.jwtUtils.GenerateTokenForPaysprint()
+	if err != nil {
+		return nil, err
+	}
 
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("authorized_key", "UFMwMDI3NDZmZjUyNjIzZmM3OGM2MzJhYWIwMTAzYmRjZjFlYTgzMQ==")
-	req.Header.Add("Token" , "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXJ0bmVySWQiOiJQUzAwMjc0NiIsInJlcWlkIjoiNTY1NDQ1NjciLCJ0aW1lc3RhbXAiOjE3Njc2MzU2NTB9.ohQSa6YTI97yJF5C7fJxG7K0iGa8kR925RMWmAEDMFk")
+	req.Header.Add("Token", token)
 	req.Header.Add("content-type", "application/json")
 
 	res, err := http.DefaultClient.Do(req)

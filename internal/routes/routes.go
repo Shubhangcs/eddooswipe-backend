@@ -14,9 +14,10 @@ type Router struct {
 }
 
 type Config struct {
-	Database     *database.Database
-	JWTSecretKey string
-	JWTExpiry    time.Duration
+	Database              *database.Database
+	JWTSecretKey          string
+	JWTExpiry             time.Duration
+	JWTSecretKeyPaySprint string
 }
 
 func NewRouter(cfg Config) (*Router, error) {
