@@ -28,7 +28,7 @@ func NewDMTRepository(db *database.Database, jwtUtils *pkg.JWTUtils) *dmtReposit
 }
 
 func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
-	url := "https://api.paysprint.in/api/v1/service/service/dmt-v6/merchant/status_check"
+	url := "https://api.paysprint.in/api/v1/service/dmt-v6/merchant/status_check"
 
 	payload := strings.NewReader("{\"merchantcode\":PS002746}")
 
