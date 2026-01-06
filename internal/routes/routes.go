@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"os"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -32,6 +33,7 @@ func NewRouter(cfg Config) (*Router, error) {
 		return nil, err
 	}
 	router.Validator = NewValidator()
+	paysprintURL := os.Getenv("PAY_SPRINT_URL")
 
 	rtr := Router{EchoRouter: router}
 
@@ -42,7 +44,7 @@ func NewRouter(cfg Config) (*Router, error) {
 	rtr.fundRoutes(cfg.Database, jwt)
 	rtr.bankRouter(cfg.Database, jwt)
 	rtr.commisionRoutes(cfg.Database, jwt)
-	rtr.dmtRouter(cfg.Database, jwt)
+	rtr.dmtRouter(cfg.Database, jwt, paysprintURL)
 
 	return &rtr, nil
 }

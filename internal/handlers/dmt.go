@@ -23,5 +23,13 @@ func (dh *dmtHandler) RegisterMerchantRequest(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
 	}
+	return c.JSON(http.StatusOK, models.ResponseModel{Message: "dmt merchant registered successfully", Status: "success", Data: map[string]any{"response": res}})
+}
+
+func (dh *dmtHandler) CheckMerchantRegistrationRequest(c echo.Context) error {
+	res, err := dh.dmtRepository.CheckMerchantRegistration(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, models.ResponseModel{Message: err.Error(), Status: "failed"})
+	}
 	return c.JSON(http.StatusOK, models.ResponseModel{Message: "dmt register merchant check success", Status: "success", Data: map[string]any{"response": res}})
 }

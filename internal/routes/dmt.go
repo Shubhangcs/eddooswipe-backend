@@ -7,9 +7,10 @@ import (
 	"github.com/levionstudio/eddoswipe-backend/pkg"
 )
 
-func (r *Router) dmtRouter(db *database.Database, jwtUtils *pkg.JWTUtils) {
-	dmtRepo := repositories.NewDMTRepository(db,jwtUtils)
+func (r *Router) dmtRouter(db *database.Database, jwtUtils *pkg.JWTUtils, paysprintURL string) {
+	dmtRepo := repositories.NewDMTRepository(db, jwtUtils, paysprintURL)
 	dmtHandler := handlers.NewDMTHandler(dmtRepo)
 
-	r.EchoRouter.GET("/dmt/register", dmtHandler.RegisterMerchantRequest)
+	r.EchoRouter.GET("/dmt/check/merchant/:retailer_id", dmtHandler.CheckMerchantRegistrationRequest)
+	r.EchoRouter.GET("/dmt/register/merchant", dmtHandler.RegisterMerchantRequest)
 }
