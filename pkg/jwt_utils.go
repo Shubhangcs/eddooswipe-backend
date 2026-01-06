@@ -22,6 +22,7 @@ type Config struct {
 }
 
 func NewJWTUtils(cfg Config) (*JWTUtils, error) {
+	fmt.Println(cfg.PaySprintSecretKey)
 	if cfg.SecretKey == "" || cfg.Expiry == 0 || cfg.PaySprintSecretKey == "" {
 		return nil, fmt.Errorf("failed to create jwt utils fields are empty")
 	}

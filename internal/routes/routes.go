@@ -24,8 +24,9 @@ func NewRouter(cfg Config) (*Router, error) {
 	// Creating a new Echo Router
 	router := echo.New()
 	jwt, err := pkg.NewJWTUtils(pkg.Config{
-		SecretKey: cfg.JWTSecretKey,
-		Expiry:    cfg.JWTExpiry,
+		SecretKey:          cfg.JWTSecretKey,
+		Expiry:             cfg.JWTExpiry,
+		PaySprintSecretKey: cfg.JWTSecretKeyPaySprint,
 	})
 	if err != nil {
 		return nil, err

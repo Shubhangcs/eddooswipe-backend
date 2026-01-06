@@ -11,14 +11,25 @@ CREATE TABLE
     );
 
 CREATE TABLE 
-    IF NOT EXISTS operators (
-        operator_id TEXT NOT NULL,
-        operator_name TEXT NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT NOW()
+    IF NOT EXISTS commision_categories(
+        commision_category_id TEXT NOT NULL,
+        category_name TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE 
+    IF NOT EXISTS commision_sub_categories (
+        commision_category_id TEXT NOT NULL,
+        commision_sub_category_id TEXT NOT NULL,
+        sub_category_name TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        FOREIGN KEY (commision_category_id) REFERENCES commision_categories(commision_category_id) ON DELETE CASCADE
     );
 
 CREATE TABLE 
-    IF NOT EXISTS commisions (
+    IF NOT EXISTS common_commisions (
+        commision_category_id TEXT NOT NULL,
+        commision_sub_category_id TEXT NOT NULL,
         commision_id TEXT PRIMARY KEY NOT NULL,
         operator_id TEXT NOT NULL,
         operator_name TEXT NOT NULL,
@@ -34,3 +45,12 @@ CREATE TABLE
         FOREIGN KEY (operator_id) REFERENCES operators(operator_id) ON DELETE CASCADE
     );
 
+CREATE TABLE
+    IF NOT EXISTS custom_commisions (
+        commision_category_id TEXT NOT NULL,
+        commision_sub_category_id TEXT NOT NULL,
+        custom_commision_id TEXT PRIMARY KEY NOT NULL,
+        user_id TEXT NOT NULL,
+        user_type TEXT NOT NULL CHECK (user_type IN ('RETAILER' , 'MASTER_DISTRIBUTOR' , 'DISTRIBUTOR')),
+        user_sla
+    );
