@@ -72,7 +72,6 @@ func (dr *dmtRepository) CheckMerchantRegistration(c echo.Context) (*models.Chec
 	}
 	return &response, err
 }
-
 func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
 	var req models.RegisterMerchantRequest
 	if err := bindAndValidate(c, &req); err != nil {
@@ -81,25 +80,41 @@ func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
 
 	ctx, cancel := context.WithTimeout(c.Request().Context(), time.Second*10)
 	defer cancel()
+
 	if err := dr.db.GetRetailerDetailsForDMT(ctx, &req); err != nil {
 		return nil, err
 	}
+
+	// 🔐 Encrypt PID before sending to Paysprint
+	encryptedPID, err := pkg.EncryptAES128CBC(
+		req.PIDData,
+		"5af6a2b527cef4e8", // 🔴 from env
+		"3c2afa60acc949df",  // 🔴 from env
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	req.PIDData = encryptedPID
 
 	jsonBytes, err := json.Marshal(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal json")
 	}
+
 	payload := bytes.NewReader(jsonBytes)
-	var url = fmt.Sprintf("%s/service/dmt-v6/merchant/register", dr.paysprintURL)
+	url := fmt.Sprintf("%s/service/dmt-v6/merchant/register", dr.paysprintURL)
 
 	r, err := http.NewRequest("POST", url, payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to process request")
 	}
+
 	token, err := dr.jwtUtils.GenerateTokenForPaysprint()
 	if err != nil {
 		return nil, err
 	}
+
 	r.Header.Add("accept", "application/json")
 	r.Header.Add("authorized_key", "UFMwMDI3NDZmZjUyNjIzZmM3OGM2MzJhYWIwMTAzYmRjZjFlYTgzMQ==")
 	r.Header.Add("Token", token)
@@ -109,8 +124,8 @@ func (dr *dmtRepository) RegisterMerchant(c echo.Context) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	defer res.Body.Close()
+
 	body, _ := io.ReadAll(res.Body)
 
 	var response any
