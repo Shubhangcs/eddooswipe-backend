@@ -12,5 +12,5 @@ func (r *Router) dmtRouter(db *database.Database, jwtUtils *pkg.JWTUtils, payspr
 	dmtHandler := handlers.NewDMTHandler(dmtRepo)
 
 	r.EchoRouter.GET("/dmt/check/merchant/:retailer_id", dmtHandler.CheckMerchantRegistrationRequest)
-	r.EchoRouter.GET("/dmt/register/merchant", dmtHandler.RegisterMerchantRequest)
+	r.EchoRouter.POST("/dmt/register/merchant", dmtHandler.RegisterMerchantRequest)
 }
